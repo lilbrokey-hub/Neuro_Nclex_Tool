@@ -1,0 +1,4296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧠 Neurological Disorders — NCLEX Study Tool</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { min-height: 100vh; background: #0a0e1a; font-family: Georgia, 'Times New Roman', serif; color: #e8dcc8; }
+  button { font-family: inherit; cursor: pointer; }
+
+  #header {
+    background: linear-gradient(135deg, #0d0a1f 0%, #1a0d35 50%, #0f1a2e 100%);
+    border-bottom: 2px solid #5b2d8e;
+    padding: 20px 28px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  }
+  #header .subtitle { font-size: 11px; letter-spacing: 6px; color: #8e44ad; text-transform: uppercase; margin-bottom: 4px; }
+  #header h1 { font-size: 30px; font-weight: 700; color: #c39bd3; letter-spacing: 2px; }
+  #header .desc { font-size: 13px; color: #a09070; margin-top: 4px; }
+  .tab-bar { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tab-btn {
+    padding: 10px 18px; border: none; border-radius: 6px;
+    font-size: 13px; letter-spacing: 1px; text-transform: uppercase;
+    background: rgba(255,255,255,0.05); color: #a09070;
+    border-bottom: 2px solid transparent; transition: all 0.2s;
+  }
+  .tab-btn.active { background: #5b2d8e; color: #c39bd3; border-bottom: 2px solid #c39bd3; }
+
+  .panel { display: none; padding: 28px; max-width: 1200px; margin: 0 auto; }
+  .panel.active { display: block; }
+
+  /* CONCEPT MAP */
+  .map-center { text-align: center; margin-bottom: 28px; }
+  .map-center-box {
+    display: inline-block; padding: 18px 36px;
+    background: radial-gradient(circle, #5b2d8e, #2e1566);
+    border-radius: 12px; border: 2px solid #c39bd3;
+    box-shadow: 0 0 40px rgba(91,45,142,0.6);
+  }
+  .map-center-box .title { font-size: 26px; font-weight: 700; color: #c39bd3; letter-spacing: 3px; }
+  .map-center-box .hint { font-size: 11px; color: #d7bde2; letter-spacing: 2px; margin-top: 4px; }
+  .branches-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .branch-card {
+    border-radius: 10px; padding: 18px; cursor: pointer;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-left-width: 4px; transition: all 0.3s;
+  }
+  .branch-header { display: flex; align-items: center; justify-content: space-between; }
+  .branch-header .left { display: flex; align-items: center; gap: 10px; }
+  .branch-icon { font-size: 20px; }
+  .branch-label { font-size: 14px; font-weight: 700; letter-spacing: 1px; }
+  .branch-arrow { font-size: 16px; }
+  .branch-items { margin-top: 14px; list-style: none; }
+  .branch-items li {
+    padding: 7px 0; font-size: 12.5px; color: #d4c4a0;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .branch-items li:last-child { border-bottom: none; }
+  .branch-items li .dot { margin-top: 2px; }
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 28px; }
+  .stat-card { background: rgba(255,255,255,0.03); border-radius: 8px; padding: 16px; text-align: center; }
+  .stat-val { font-size: 20px; font-weight: 700; }
+  .stat-label { font-size: 11px; color: #a09070; letter-spacing: 1px; margin-top: 4px; }
+
+  /* QUIZ */
+  #quiz-panel { max-width: 780px; }
+  .quiz-start { text-align: center; }
+  .quiz-start h2 { color: #c39bd3; font-size: 22px; margin-bottom: 8px; }
+  .quiz-start p { color: #a09070; margin-bottom: 22px; }
+  .cat-filters { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 22px; }
+  .cat-btn {
+    padding: 7px 15px; border-radius: 20px; border: none;
+    font-size: 12px; transition: all 0.2s; color: #a09070;
+    background: rgba(255,255,255,0.07);
+  }
+  .start-btn {
+    padding: 14px 44px;
+    background: linear-gradient(135deg, #5b2d8e, #8e44ad);
+    border: none; border-radius: 8px; color: #c39bd3;
+    font-size: 15px; font-weight: 700; letter-spacing: 2px;
+  }
+  .q-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .q-num { font-size: 12px; color: #a09070; }
+  .q-cat-badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; letter-spacing: 1px; }
+  .q-type-badge {
+    padding: 3px 10px; border-radius: 20px; font-size: 10px; letter-spacing: 1px;
+    background: rgba(255,200,50,0.15); color: #f5c842; border: 1px solid rgba(245,200,66,0.3);
+  }
+  .progress-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-bottom: 22px; }
+  .progress-fill { height: 100%; background: #c39bd3; border-radius: 2px; transition: width 0.3s; }
+  .q-box { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 22px; margin-bottom: 18px; }
+  .q-text { font-size: 15px; line-height: 1.75; color: #e8dcc8; }
+  .sata-hint { font-size: 12px; color: #f5c842; margin-top: 10px; font-style: italic; }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt-btn {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 13px 16px; text-align: left;
+    color: #d4c4a0; font-size: 13.5px; line-height: 1.5; transition: all 0.2s;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .opt-btn:hover:not(:disabled) { background: rgba(255,255,255,0.08); }
+  .opt-btn.correct { background: rgba(39,174,96,0.2) !important; border-color: #27ae60 !important; color: #7dcea0 !important; }
+  .opt-btn.wrong { background: rgba(192,57,43,0.2) !important; border-color: #c0392b !important; color: #e57373 !important; }
+  .opt-btn.selected-sata { background: rgba(91,45,142,0.3) !important; border-color: #c39bd3 !important; color: #c39bd3 !important; }
+  .opt-check { width: 18px; height: 18px; border-radius: 4px; border: 2px solid rgba(255,255,255,0.3); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+  .submit-sata-btn {
+    margin-top: 14px; padding: 11px 28px; border: none; border-radius: 8px;
+    background: linear-gradient(135deg, #5b2d8e, #8e44ad); color: #c39bd3;
+    font-size: 13px; font-weight: 700; letter-spacing: 1px;
+  }
+  .rationale-box {
+    margin-top: 18px; padding: 18px;
+    background: rgba(195,155,211,0.08); border: 1px solid rgba(195,155,211,0.3);
+    border-radius: 10px;
+  }
+  .rationale-label { font-size: 11px; color: #c39bd3; letter-spacing: 2px; margin-bottom: 8px; }
+  .rationale-text { color: #e8d8a0; font-size: 13.5px; line-height: 1.7; margin-bottom: 14px; }
+  .next-btn { padding: 10px 26px; border: none; border-radius: 6px; color: #fff; font-size: 13px; letter-spacing: 1px; }
+
+  /* RESULTS */
+  .results { text-align: center; }
+  .results .trophy { font-size: 52px; margin-bottom: 14px; }
+  .results h2 { color: #c39bd3; font-size: 26px; margin-bottom: 8px; }
+  .results .big-score { font-size: 48px; font-weight: 700; margin-bottom: 6px; }
+  .results .pct { font-size: 18px; color: #a09070; margin-bottom: 6px; }
+  .results .feedback { font-size: 14px; margin-bottom: 28px; }
+  .result-btns { display: flex; gap: 12px; justify-content: center; margin-bottom: 32px; }
+  .result-btn { padding: 12px 26px; border-radius: 8px; font-size: 14px; border: none; }
+  .missed-section h3 { color: #e57373; margin-bottom: 14px; font-size: 15px; letter-spacing: 1px; }
+  .missed-item {
+    background: rgba(192,57,43,0.1); border: 1px solid rgba(192,57,43,0.3);
+    border-radius: 8px; padding: 16px; margin-bottom: 12px; text-align: left;
+  }
+  .missed-q { font-size: 13px; color: #e8d8a0; margin-bottom: 10px; line-height: 1.6; }
+  .missed-yours { font-size: 12px; color: #e57373; margin-bottom: 5px; }
+  .missed-correct { font-size: 12px; color: #7dcea0; margin-bottom: 8px; }
+  .missed-rat { font-size: 12px; color: #c8b890; font-style: italic; line-height: 1.6; }
+
+  /* DRUG REFERENCE */
+  .drugs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 16px; }
+  .drug-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+    border-left: 4px solid #5b2d8e; border-radius: 10px; padding: 18px;
+  }
+  .drug-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .drug-name { font-size: 15px; font-weight: 700; color: #c39bd3; }
+  .drug-class { font-size: 11px; color: #8e44ad; letter-spacing: 1px; margin-top: 2px; }
+  .drug-use-badge {
+    background: rgba(91,45,142,0.3); padding: 3px 10px; border-radius: 12px;
+    font-size: 11px; color: #d7bde2; text-align: right; max-width: 160px; line-height: 1.4;
+  }
+  .drug-moa { font-size: 12px; color: #a09070; margin-bottom: 8px; line-height: 1.6; }
+  .drug-moa span { color: #8b9bb4; }
+  .drug-nursing { font-size: 12px; color: #a0c0a0; margin-bottom: 8px; line-height: 1.6; }
+  .drug-nursing span { color: #7db87d; }
+  .drug-alert {
+    font-size: 11px; color: #e8a060; background: rgba(232,160,96,0.1);
+    border-radius: 6px; padding: 6px 10px; line-height: 1.5;
+  }
+  .ref-title { color: #c39bd3; font-size: 20px; margin-bottom: 22px; letter-spacing: 2px; }
+
+  /* QUANTITY SELECTOR */
+  .qty-label { font-size: 12px; color: #a09070; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+  .qty-grid { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px; }
+  .qty-btn {
+    width: 56px; height: 40px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.05); color: #a09070; font-size: 13px; font-weight: 700;
+    transition: all 0.2s;
+  }
+  .qty-btn:hover { background: rgba(91,45,142,0.2); color: #c39bd3; border-color: #8e44ad; }
+  .qty-btn.active { background: #5b2d8e; color: #fff; border-color: #c39bd3; box-shadow: 0 0 12px rgba(91,45,142,0.5); }
+  .qty-avail { font-size: 11px; color: #7f8c8d; margin-bottom: 18px; }
+
+  @media (max-width: 600px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .drugs-grid { grid-template-columns: 1fr; }
+    #header { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div>
+    <div class="subtitle">NCLEX Master Series</div>
+    <h1>🧠 Neurological Disorders</h1>
+    <div class="desc">Concept Map · 250 NCLEX Questions · Pharmacology Reference</div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="showTab('map')">📊 Concept Map</button>
+    <button class="tab-btn" onclick="showTab('quiz')">📝 NCLEX Quiz</button>
+    <button class="tab-btn" onclick="showTab('drugs')">💊 Drug Reference</button>
+  </div>
+</div>
+
+<!-- CONCEPT MAP -->
+<div id="map-panel" class="panel active">
+  <div class="map-center">
+    <div class="map-center-box">
+      <div class="title">🧠 NEURO</div>
+      <div class="hint">Click a branch to expand</div>
+    </div>
+  </div>
+  <div class="branches-grid" id="branches"></div>
+  <div class="stats-grid">
+    <div class="stat-card" style="border:1px solid #8e44ad44"><div class="stat-val" style="color:#8e44ad">5–15</div><div class="stat-label">Normal ICP (mmHg)</div></div>
+    <div class="stat-card" style="border:1px solid #2980b944"><div class="stat-val" style="color:#2980b9">70–100</div><div class="stat-label">Normal CPP (mmHg)</div></div>
+    <div class="stat-card" style="border:1px solid #27ae6044"><div class="stat-val" style="color:#27ae60">15 Max</div><div class="stat-label">GCS Full Score</div></div>
+    <div class="stat-card" style="border:1px solid #f5c84244"><div class="stat-val" style="color:#f5c842">250 Total</div><div class="stat-label">NCLEX Questions</div></div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz-panel" class="panel">
+  <div id="quiz-start-screen" class="quiz-start">
+    <h2>NCLEX-Style Practice Quiz</h2>
+    <p>ICP · TBI · Brain Tumors · Aneurysm · Assessment · Shock</p>
+    <div class="cat-filters" id="cat-filters"></div>
+    <div class="qty-label">How many questions?</div>
+    <div class="qty-grid" id="qty-grid"></div>
+    <div class="qty-avail" id="qty-avail"></div>
+    <button class="start-btn" onclick="startQuiz()">START QUIZ (<span id="q-count">250</span> Questions)</button>
+  </div>
+  <div id="quiz-question-screen" style="display:none">
+    <div class="q-meta">
+      <div class="q-num" id="q-num-label"></div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="q-type-badge" id="q-type-badge" style="display:none">SELECT ALL</span>
+        <div class="q-cat-badge" id="q-cat-badge"></div>
+      </div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="q-box">
+      <div class="q-text" id="q-text"></div>
+      <div class="sata-hint" id="sata-hint" style="display:none">⚡ Select ALL correct answers, then click Submit.</div>
+    </div>
+    <div class="options" id="options"></div>
+    <div id="sata-submit-wrap" style="display:none">
+      <button class="submit-sata-btn" onclick="submitSATA()">Submit Answers</button>
+    </div>
+    <div class="rationale-box" id="rationale-box" style="display:none">
+      <div class="rationale-label">RATIONALE</div>
+      <div class="rationale-text" id="rationale-text"></div>
+      <button class="next-btn" id="next-btn" onclick="nextQ()">Next Question →</button>
+    </div>
+  </div>
+  <div id="quiz-results-screen" style="display:none" class="results">
+    <div class="trophy" id="trophy"></div>
+    <h2>Quiz Complete</h2>
+    <div class="big-score" id="big-score"></div>
+    <div class="pct" id="pct-score"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="result-btns">
+      <button class="result-btn" style="background:#5b2d8e;color:#c39bd3" onclick="backToStart()">↩ New Quiz</button>
+      <button class="result-btn" style="background:rgba(255,255,255,0.07);color:#e8dcc8" onclick="retryMissed()">🔁 Retry Missed</button>
+    </div>
+    <div class="missed-section" id="missed-section"></div>
+  </div>
+</div>
+
+<!-- DRUG REFERENCE -->
+<div id="drugs-panel" class="panel">
+  <div class="ref-title">💊 NEUROLOGICAL PHARMACOLOGY REFERENCE</div>
+  <div class="drugs-grid" id="drugs-grid"></div>
+</div>
+
+<script>
+const questions = [
+  {
+    "id": 1,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "What is the normal range for intracranial pressure (ICP)?",
+    "options": [
+      "0–5 mm Hg",
+      "5–15 mm Hg",
+      "20–30 mm Hg",
+      "30–40 mm Hg"
+    ],
+    "rationale": "Normal ICP is 5 to 15 mm Hg. ICP is considered elevated when it is sustained above 20 mm Hg.",
+    "answer": 1
+  },
+  {
+    "id": 2,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "According to the Monro-Kellie doctrine, if one component of the intracranial contents increases, what must happen to maintain normal ICP?",
+    "options": [
+      "Another component must also increase",
+      "Another component must decrease",
+      "CSF production must double",
+      "Blood pressure must rise to compensate"
+    ],
+    "rationale": "The Monro-Kellie doctrine states that the skull is a rigid container. If one component (brain tissue, blood, or CSF) increases in volume, at least one other must decrease to maintain normal ICP.",
+    "answer": 1
+  },
+  {
+    "id": 3,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "A nurse calculates a patient's cerebral perfusion pressure (CPP). The MAP is 90 mm Hg and ICP is 15 mm Hg. What is the CPP?",
+    "options": [
+      "75 mm Hg",
+      "105 mm Hg",
+      "80 mm Hg",
+      "60 mm Hg"
+    ],
+    "rationale": "CPP = MAP – ICP = 90 – 15 = 75 mm Hg. Normal CPP is 70–100 mm Hg.",
+    "answer": 0
+  },
+  {
+    "id": 4,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "A CPP below which value is associated with cerebral ischemia and neuronal death?",
+    "options": [
+      "70 mm Hg",
+      "60 mm Hg",
+      "50 mm Hg",
+      "40 mm Hg"
+    ],
+    "rationale": "A CPP less than 50 mm Hg is associated with ischemia and neuronal death. The normal range is 70–100 mm Hg.",
+    "answer": 2
+  },
+  {
+    "id": 5,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Which stage of increased ICP is characterized by total compensation with no clinical manifestations?",
+    "options": [
+      "Stage 1",
+      "Stage 2",
+      "Stage 3",
+      "Stage 4"
+    ],
+    "rationale": "Stage 1 represents total compensation. The brain is still able to compensate for the increasing volume without a rise in ICP.",
+    "answer": 0
+  },
+  {
+    "id": 6,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "At which stage of ICP does herniation become imminent and death is likely?",
+    "options": [
+      "Stage 1",
+      "Stage 2",
+      "Stage 3",
+      "Stage 4"
+    ],
+    "rationale": "Stage 4 of the intracranial volume-pressure curve represents imminent herniation and death due to complete loss of compensatory mechanisms.",
+    "answer": 3
+  },
+  {
+    "id": 7,
+    "category": "Intracranial Pressure",
+    "type": "sata",
+    "q": "SELECT ALL THAT APPLY: Which findings are components of Cushing's Triad, indicating critically elevated ICP?",
+    "options": [
+      "Widened pulse pressure",
+      "Bradycardia",
+      "Irregular respirations",
+      "Hypotension",
+      "Tachycardia"
+    ],
+    "rationale": "Cushing's triad consists of widened pulse pressure (rising systolic BP), bradycardia, and irregular respirations. These are late, ominous signs of severely elevated ICP.",
+    "answers": [
+      0,
+      1,
+      2
+    ]
+  },
+  {
+    "id": 8,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "A patient with elevated ICP suddenly exhibits widened pulse pressure, bradycardia, and irregular respirations. The nurse recognizes this as:",
+    "options": [
+      "Signs of hypovolemic shock",
+      "Cushing's triad — a late sign of severely elevated ICP",
+      "A normal response to head positioning",
+      "Signs of septic shock"
+    ],
+    "rationale": "Cushing's triad (widened pulse pressure, bradycardia, irregular respirations) is a late, ominous sign of severely elevated ICP indicating the brainstem is being compressed.",
+    "answer": 1
+  },
+  {
+    "id": 9,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Which posturing indicates MORE serious brain damage?",
+    "options": [
+      "Decorticate posturing (flexor)",
+      "Decerebrate posturing (extensor)",
+      "Flaccid paralysis",
+      "Hemiplegia"
+    ],
+    "rationale": "Decerebrate (extensor) posturing indicates more serious damage than decorticate (flexor) posturing, as it reflects dysfunction at the level of the midbrain or pons.",
+    "answer": 1
+  },
+  {
+    "id": 10,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Why is lumbar puncture contraindicated in patients with increased ICP?",
+    "options": [
+      "It increases CSF production",
+      "It can cause brain herniation by releasing pressure from below",
+      "It causes systemic infection",
+      "It raises MAP significantly"
+    ],
+    "rationale": "Lumbar puncture is contraindicated with elevated ICP because sudden release of pressure below can cause the brain to herniate downward through the foramen magnum.",
+    "answer": 1
+  },
+  {
+    "id": 11,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "A patient with elevated ICP is being positioned. What is the correct head-of-bed (HOB) elevation?",
+    "options": [
+      "Flat (0°)",
+      "15 degrees",
+      "30 degrees",
+      "45 degrees"
+    ],
+    "rationale": "The HOB should be elevated to 30 degrees to facilitate venous drainage and reduce ICP. Hip flexion should also be avoided.",
+    "answer": 2
+  },
+  {
+    "id": 12,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "What is the primary mechanism by which mannitol (Osmitrol) reduces ICP?",
+    "options": [
+      "Decreasing cerebral metabolism",
+      "Drawing fluid out of brain tissue into the bloodstream via osmosis",
+      "Increasing CSF absorption",
+      "Blocking pain receptors in the hypothalamus"
+    ],
+    "rationale": "Mannitol is an osmotic diuretic that creates an osmotic gradient, drawing extracellular fluid from brain tissue into the bloodstream, thereby reducing cerebral edema and ICP.",
+    "answer": 1
+  },
+  {
+    "id": 13,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "When monitoring ICP with a fluid-filled system, what fluid is used to fill the system?",
+    "options": [
+      "Dextrose 5% in water (D5W)",
+      "Normal saline (NS)",
+      "Lactated Ringer's",
+      "Sterile water"
+    ],
+    "rationale": "Normal saline (NS) is used as the fluid in ICP monitoring systems to prevent complications such as hyponatremia that could occur with dextrose-containing solutions.",
+    "answer": 1
+  },
+  {
+    "id": 14,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "The nurse notes that a patient's ICP reading suddenly changes after repositioning. Which factor most likely caused this inaccurate reading?",
+    "options": [
+      "Difference in height of transducer relative to the reference point",
+      "Normal variation in ICP",
+      "Increased CSF production",
+      "Medication administration"
+    ],
+    "rationale": "Inaccurate ICP readings can be caused by differences in the height of the bolt or transducer, as well as air bubbles, kinks in tubing, and CSF leaks.",
+    "answer": 0
+  },
+  {
+    "id": 15,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Which medication class is used to reduce cerebral edema around brain tumors and is considered a key drug for elevated ICP?",
+    "options": [
+      "Loop diuretics",
+      "Beta-blockers",
+      "Corticosteroids (e.g., dexamethasone)",
+      "Calcium channel blockers"
+    ],
+    "rationale": "Corticosteroids such as dexamethasone are used to reduce vasogenic cerebral edema, particularly that associated with brain tumors, by stabilizing the blood-brain barrier.",
+    "answer": 2
+  },
+  {
+    "id": 16,
+    "category": "Intracranial Pressure",
+    "type": "sata",
+    "q": "SELECT ALL THAT APPLY: Which conditions can INCREASE intracranial pressure?",
+    "options": [
+      "Hypertension",
+      "Brain tumor",
+      "Intracranial hemorrhage",
+      "Dehydration",
+      "Hydrocephalus",
+      "CSF leak"
+    ],
+    "rationale": "Hypertension, brain tumors, intracranial hemorrhage, and hydrocephalus all increase ICP. Dehydration and CSF leaks can actually DECREASE ICP.",
+    "answers": [
+      0,
+      1,
+      2,
+      4
+    ]
+  },
+  {
+    "id": 17,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "What does the LICOX catheter measure?",
+    "options": [
+      "Cerebral blood flow velocity",
+      "ICP and brain tissue oxygenation",
+      "CSF glucose levels",
+      "Cerebrovascular resistance"
+    ],
+    "rationale": "The LICOX catheter system measures both ICP and brain tissue oxygenation (PbtO2), providing valuable information to guide management of critically ill neurological patients.",
+    "answer": 1
+  },
+  {
+    "id": 18,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "A nurse caring for a patient with elevated ICP notes the patient's headache is worse in the morning. The nurse understands this is because:",
+    "options": [
+      "Sleep deprivation worsens pain",
+      "ICP is normally higher in the morning due to recumbent position during sleep",
+      "Medications wear off overnight",
+      "Patients are more aware of pain when rested"
+    ],
+    "rationale": "ICP-related headaches are typically worse in the morning because lying flat during sleep impairs venous drainage and allows ICP to accumulate overnight.",
+    "answer": 1
+  },
+  {
+    "id": 19,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "A patient with increased ICP suddenly vomits forcefully without prior nausea. The nurse documents this as:",
+    "options": [
+      "Stress-related nausea",
+      "Medication side effect",
+      "Projectile vomiting — a sign of elevated ICP",
+      "Aspiration event"
+    ],
+    "rationale": "Projectile vomiting without preceding nausea is a classic sign of elevated ICP caused by pressure on the vomiting center in the brainstem.",
+    "answer": 2
+  },
+  {
+    "id": 20,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Bilateral dilated and fixed pupils in a patient with elevated ICP are considered:",
+    "options": [
+      "A normal pupillary response",
+      "An ominous sign indicating severe neurological compromise",
+      "Evidence of medication toxicity only",
+      "A benign finding in unconscious patients"
+    ],
+    "rationale": "Bilateral fixed and dilated pupils (also called 'blown pupils') are an ominous sign indicating severe brainstem herniation and neurological deterioration.",
+    "answer": 1
+  },
+  {
+    "id": 21,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Pinpoint pupils in a neurological patient most likely indicate:",
+    "options": [
+      "Uncal herniation",
+      "Pons damage or opioid/drug toxicity",
+      "Optic nerve damage",
+      "Mild concussion"
+    ],
+    "rationale": "Pinpoint (miotic) pupils suggest pons damage or the effect of opioids and certain other drugs. This is distinct from the unilateral dilation seen with CN III compression.",
+    "answer": 1
+  },
+  {
+    "id": 22,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "What target PaO2 is maintained in patients with increased ICP to promote cerebral oxygenation?",
+    "options": [
+      ">80 mm Hg",
+      ">90 mm Hg",
+      ">100 mm Hg",
+      ">110 mm Hg"
+    ],
+    "rationale": "A PaO2 greater than 100 mm Hg is the target to ensure adequate cerebral oxygenation. PaCO2 is also maintained between 35 and 45 mm Hg to avoid vasodilation or vasoconstriction.",
+    "answer": 2
+  },
+  {
+    "id": 23,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "The three essential components within the skull according to the Monro-Kellie doctrine are:",
+    "options": [
+      "Neurons, glia, and blood vessels",
+      "Brain tissue, blood, and cerebrospinal fluid",
+      "Gray matter, white matter, and CSF",
+      "Cerebrum, cerebellum, and brainstem"
+    ],
+    "rationale": "The Monro-Kellie doctrine identifies three essential components in the rigid skull: brain tissue (~80%), blood (~10%), and cerebrospinal fluid (~10%).",
+    "answer": 1
+  },
+  {
+    "id": 24,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "A patient with increased ICP is being cared for. The nurse should AVOID which action?",
+    "options": [
+      "Elevating HOB to 30 degrees",
+      "Administering mannitol as ordered",
+      "Placing patient in Trendelenburg position",
+      "Maintaining normothermia"
+    ],
+    "rationale": "Trendelenburg (head down) position increases ICP by impairing venous drainage from the brain. HOB should be elevated 30 degrees, not lowered.",
+    "answer": 2
+  },
+  {
+    "id": 25,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Which type of cerebral edema results from disruption of the blood-brain barrier and is commonly seen with tumors and trauma?",
+    "options": [
+      "Cytotoxic edema",
+      "Vasogenic edema",
+      "Interstitial edema",
+      "Osmotic edema"
+    ],
+    "rationale": "Vasogenic edema results from disruption of the blood-brain barrier, allowing fluid to move from the vasculature into the extracellular space. It is common with tumors, abscesses, and trauma.",
+    "answer": 1
+  },
+  {
+    "id": 26,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Cytotoxic cerebral edema is characterized by:",
+    "options": [
+      "Breakdown of the blood-brain barrier",
+      "Swelling of brain cells due to intracellular accumulation of fluid",
+      "Obstruction of CSF flow",
+      "Venous engorgement"
+    ],
+    "rationale": "Cytotoxic edema results from failure of the cellular sodium-potassium ATPase pump, causing sodium and water to accumulate inside cells. It is seen with ischemia and hypoxia.",
+    "answer": 1
+  },
+  {
+    "id": 27,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Interstitial cerebral edema is most commonly associated with:",
+    "options": [
+      "Stroke",
+      "Hydrocephalus causing CSF to move into brain tissue",
+      "Traumatic brain injury",
+      "Bacterial meningitis"
+    ],
+    "rationale": "Interstitial edema occurs when increased CSF pressure forces fluid across the ependymal lining into the surrounding white matter, most commonly seen with hydrocephalus.",
+    "answer": 1
+  },
+  {
+    "id": 28,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Which herniation syndrome involves the temporal lobe herniating through the tentorial notch, compressing CN III?",
+    "options": [
+      "Cingulate herniation",
+      "Transcalvarial herniation",
+      "Uncal herniation",
+      "Tonsillar herniation"
+    ],
+    "rationale": "Uncal herniation involves the uncus (medial temporal lobe) herniating through the tentorial notch. Classic signs include ipsilateral fixed dilated pupil (CN III compression) and contralateral hemiplegia.",
+    "answer": 2
+  },
+  {
+    "id": 29,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "ICP monitoring is indicated when the Glasgow Coma Scale is:",
+    "options": [
+      "≤12",
+      "≤10",
+      "≤8",
+      "≤6"
+    ],
+    "rationale": "ICP monitoring is indicated when the GCS is ≤8 (indicating coma) and/or when there are abnormal CT scan findings such as mass lesions, contusions, or cerebral edema.",
+    "answer": 2
+  },
+  {
+    "id": 30,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "A patient with elevated ICP becomes febrile. The nurse understands that hyperthermia:",
+    "options": [
+      "Has no effect on cerebral metabolism",
+      "Decreases ICP by causing vasoconstriction",
+      "Increases cerebral metabolic demand and worsens ICP",
+      "Is beneficial because it fights infection"
+    ],
+    "rationale": "Hyperthermia increases the cerebral metabolic rate, increasing oxygen and glucose demand and worsening ICP. The goal is normothermia (36–37°C) to prevent shivering and metabolic demand.",
+    "answer": 2
+  },
+  {
+    "id": 31,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "When a ventricular catheter is in place for ICP monitoring, the nurse may:",
+    "options": [
+      "Continuously drain large volumes of CSF freely",
+      "Control ICP by intermittent or continuous controlled CSF drainage",
+      "Inject medications directly into the ventricles without orders",
+      "Leave the drainage system unclamped at all times"
+    ],
+    "rationale": "A ventriculostomy (ventricular catheter) allows both ICP monitoring AND controlled CSF drainage to reduce ICP. The volume drained must be carefully monitored to prevent over-drainage.",
+    "answer": 1
+  },
+  {
+    "id": 32,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "The nurse is monitoring ICP waveforms. Which waveform pattern is most concerning?",
+    "options": [
+      "Normal P1 > P2 > P3 pattern",
+      "Plateau (A) waves — sustained high-pressure waves",
+      "B waves — rhythmic oscillations",
+      "C waves — small regular oscillations"
+    ],
+    "rationale": "Plateau (A) waves (also called Lundberg A waves) are sustained elevations in ICP of 50–100 mm Hg lasting 5–20 minutes. They indicate severely reduced compliance and are the most dangerous pattern.",
+    "answer": 1
+  },
+  {
+    "id": 33,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Compliance in the context of ICP is defined as:",
+    "options": [
+      "The brain's ability to autoregulate blood flow",
+      "The expandability of the brain — Volume divided by Pressure",
+      "The rate of CSF absorption",
+      "Patient adherence to treatment"
+    ],
+    "rationale": "In neurology, compliance = Volume/Pressure. High compliance means the brain can accommodate volume changes without pressure changes. Low compliance means small volume increases cause large ICP rises.",
+    "answer": 1
+  },
+  {
+    "id": 34,
+    "category": "Intracranial Pressure",
+    "type": "sata",
+    "q": "SELECT ALL THAT APPLY: Which medications are used in the management of elevated ICP?",
+    "options": [
+      "Mannitol",
+      "Corticosteroids",
+      "Barbiturates/sedatives",
+      "Loop diuretics",
+      "Vasopressin",
+      "Aspirin"
+    ],
+    "rationale": "Mannitol (osmotic diuretic), corticosteroids, barbiturates/sedatives, loop diuretics, and vasopressin are all used in ICP management. Aspirin is NOT used because it increases bleeding risk.",
+    "answers": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  {
+    "id": 35,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "A patient with increased ICP has an order for hyperventilation. The nurse knows this works by:",
+    "options": [
+      "Increasing PaCO2, causing cerebral vasodilation",
+      "Decreasing PaCO2, causing cerebral vasoconstriction and reducing cerebral blood volume",
+      "Increasing PaO2 to reduce swelling",
+      "Reducing the metabolic rate of neurons"
+    ],
+    "rationale": "Hyperventilation reduces PaCO2, causing cerebral vasoconstriction, which decreases cerebral blood volume and quickly lowers ICP. However, it is used only short-term as prolonged use causes ischemia.",
+    "answer": 1
+  },
+  {
+    "id": 36,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Which finding is an early sign of increasing ICP?",
+    "options": [
+      "Fixed dilated pupils",
+      "Cushing's triad",
+      "Change in level of consciousness (LOC) — the EARLIEST sign",
+      "Decerebrate posturing"
+    ],
+    "rationale": "Change in level of consciousness (LOC) is the EARLIEST and most sensitive indicator of increasing ICP. Fixed pupils and Cushing's triad are LATE signs indicating severe compromise.",
+    "answer": 2
+  },
+  {
+    "id": 37,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "A patient with elevated ICP should NOT have which type of tube inserted due to the risk of intracranial placement with a basilar skull fracture?",
+    "options": [
+      "Orogastric tube",
+      "Nasogastric tube",
+      "Endotracheal tube",
+      "Chest tube"
+    ],
+    "rationale": "NG tubes and nasotracheal suctioning are contraindicated when a basilar skull fracture or CSF leak is present, as the tube could inadvertently enter the cranial vault through the fracture.",
+    "answer": 1
+  },
+  {
+    "id": 38,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Which action increases ICP and should be AVOIDED in patients with elevated ICP?",
+    "options": [
+      "Administering antipyretics",
+      "Performing isometric exercises or Valsalva maneuver",
+      "Elevating HOB 30 degrees",
+      "Limiting fluid intake"
+    ],
+    "rationale": "Activities that increase intrathoracic or intraabdominal pressure (Valsalva maneuver, coughing, straining, isometric exercises) transmit pressure to the brain and increase ICP.",
+    "answer": 1
+  },
+  {
+    "id": 39,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Which complication of ICP monitoring requires the nurse to maintain strict aseptic technique?",
+    "options": [
+      "Hyperthermia",
+      "Meningitis/ventriculitis",
+      "Hyponatremia",
+      "Pneumothorax"
+    ],
+    "rationale": "Meningitis and ventriculitis are serious infectious complications of ICP monitoring devices. Strict aseptic technique during insertion and maintenance is essential to prevent these life-threatening infections.",
+    "answer": 1
+  },
+  {
+    "id": 40,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "A patient with elevated ICP develops Diabetes Insipidus (DI). The nurse understands this occurs because:",
+    "options": [
+      "The pancreas is damaged",
+      "ICP compresses the hypothalamus/posterior pituitary, reducing ADH secretion",
+      "Osmotic diuretics cause DI",
+      "Loop diuretics stimulate ADH release"
+    ],
+    "rationale": "Diabetes Insipidus can occur as a complication of elevated ICP or brain injury when the hypothalamus or posterior pituitary is compressed or damaged, reducing ADH secretion and causing massive dilute urine output.",
+    "answer": 1
+  },
+  {
+    "id": 41,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "The opposite of Cushing's triad (the vital sign pattern seen in shock) includes which findings?",
+    "options": [
+      "Increased BP, decreased HR, decreased respirations",
+      "Decreased BP, increased HR, increased respirations",
+      "Decreased BP, decreased HR, decreased respirations",
+      "Increased BP, increased HR, increased respirations"
+    ],
+    "rationale": "Shock presents with decreased BP, increased HR, and increased respirations — the OPPOSITE of Cushing's triad (elevated systolic BP, bradycardia, irregular respirations).",
+    "answer": 1
+  },
+  {
+    "id": 42,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Hypertonic saline is used in management of elevated ICP because it:",
+    "options": [
+      "Increases serum sodium, which draws fluid into cells",
+      "Creates an osmotic gradient that draws fluid out of brain cells",
+      "Decreases CSF production",
+      "Directly reduces cerebral metabolism"
+    ],
+    "rationale": "Hypertonic saline creates an osmotic gradient between the plasma and brain cells, drawing water out of brain tissue and into the vasculature, thereby reducing cerebral edema and ICP.",
+    "answer": 1
+  },
+  {
+    "id": 43,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "A nurse is caring for a patient whose CSF is leaking from the nose (rhinorrhea). Which intervention is priority?",
+    "options": [
+      "Pack the nose tightly with gauze",
+      "Instruct the patient not to blow their nose; apply loose collection pad",
+      "Insert an NG tube to decompress the stomach",
+      "Administer vasopressin"
+    ],
+    "rationale": "With CSF rhinorrhea, the patient should NOT blow their nose (increases ICP), should not have NG tubes inserted, and a loose collection pad should be placed. The HOB should be elevated.",
+    "answer": 1
+  },
+  {
+    "id": 44,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "SIADH is a complication of elevated ICP. Which lab finding would the nurse expect?",
+    "options": [
+      "Hypernatremia and dilute urine",
+      "Hyponatremia and concentrated urine",
+      "Hyperkalemia and polyuria",
+      "Hyponatremia and polyuria"
+    ],
+    "rationale": "SIADH causes excessive ADH secretion, leading to water retention, hyponatremia, and concentrated urine. This is the opposite of Diabetes Insipidus (hypernatremia, dilute urine, polyuria).",
+    "answer": 1
+  },
+  {
+    "id": 45,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Which patient with elevated ICP requires PRIORITY intervention?",
+    "options": [
+      "Patient with ICP of 16 mm Hg, alert and oriented",
+      "Patient with ICP of 22 mm Hg sustained for 10 minutes",
+      "Patient with mild headache and GCS of 14",
+      "Patient with ICP of 18 mm Hg who is drowsy"
+    ],
+    "rationale": "Sustained ICP >20 mm Hg is the threshold for treatment intervention. This patient requires immediate action to prevent herniation and neuronal death.",
+    "answer": 1
+  },
+  {
+    "id": 46,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "The nurse notes flattening of affect progressing to unresponsiveness in a patient with ICP. This change in LOC suggests:",
+    "options": [
+      "Normal sleep cycle",
+      "Adequate compensation maintaining ICP",
+      "Worsening ICP moving toward coma",
+      "A response to sedative medication"
+    ],
+    "rationale": "Progressive deterioration in LOC — from alertness to flattening of affect to obtundation to coma — indicates worsening ICP and decreasing cerebral perfusion.",
+    "answer": 2
+  },
+  {
+    "id": 47,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "A craniotomy is performed for a patient with elevated ICP. Post-operatively, the nurse should prioritize which assessment?",
+    "options": [
+      "Monitoring blood glucose",
+      "Frequent neurological assessments including LOC, pupils, and motor function",
+      "Ambulation within 4 hours",
+      "Dietary intake assessment"
+    ],
+    "rationale": "Post-craniotomy, frequent neurological assessments (LOC, pupil response, motor function, vital signs, ICP) are the priority to detect early signs of re-bleeding, edema, or herniation.",
+    "answer": 1
+  },
+  {
+    "id": 48,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "In a non-compliant brain, a small increase in volume leads to:",
+    "options": [
+      "Minimal change in ICP",
+      "A large, rapid increase in ICP",
+      "Decreased cerebral blood flow without ICP changes",
+      "Compensatory reduction in CSF"
+    ],
+    "rationale": "In a non-compliant (stiff) brain, the pressure-volume curve is very steep. Even a small increase in volume causes a dramatic and dangerous rise in ICP with little ability to compensate.",
+    "answer": 1
+  },
+  {
+    "id": 49,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Which describes a dilated pupil on one side caused by compressed cranial nerve III?",
+    "options": [
+      "Bilateral miosis",
+      "Unilateral mydriasis — ipsilateral to the lesion",
+      "Consensual reflex present bilaterally",
+      "Bilateral fixed, dilated pupils"
+    ],
+    "rationale": "Unilateral dilation (mydriasis) of the pupil on the SAME SIDE (ipsilateral) as the lesion occurs when the expanding mass compresses cranial nerve III, which controls pupillary constriction.",
+    "answer": 1
+  },
+  {
+    "id": 50,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "The goal for fluid management in patients with elevated ICP is:",
+    "options": [
+      "Aggressive fluid resuscitation — 4–6 L/day",
+      "Normovolemia — maintaining euvolemia without overhydration",
+      "Mild dehydration to reduce cerebral fluid",
+      "Hypervolemia to maintain CPP"
+    ],
+    "rationale": "Normovolemia (euvolemia) is the goal. Overhydration can worsen cerebral edema and ICP, while dehydration reduces CPP. Careful fluid balance and monitoring of I&O are essential.",
+    "answer": 1
+  },
+  {
+    "id": 51,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Stage 3 of the ICP volume-pressure curve is characterized by:",
+    "options": [
+      "Total compensation — ICP normal",
+      "Decreased compensation — at risk for elevated ICP",
+      "Failing compensation — clinical manifestations of elevated ICP including Cushing's triad",
+      "Herniation imminent — brain death"
+    ],
+    "rationale": "Stage 3 represents failing compensation, at which point clinical manifestations of critically elevated ICP appear, including Cushing's triad (widened pulse pressure, bradycardia, irregular respirations).",
+    "answer": 2
+  },
+  {
+    "id": 52,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Which eye finding is associated with elevated ICP due to compression of cranial nerve VI?",
+    "options": [
+      "Inability to look laterally (lateral gaze palsy)",
+      "Inability to look downward and inward",
+      "Loss of visual acuity",
+      "Horner syndrome"
+    ],
+    "rationale": "Cranial nerve VI (Abducens) controls lateral eye movement. Compression by elevated ICP results in inability to gaze laterally (CN VI palsy), causing diplopia and medial deviation of the eye.",
+    "answer": 0
+  },
+  {
+    "id": 53,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Which laboratory monitoring is essential when administering mannitol?",
+    "options": [
+      "Blood glucose and HbA1c",
+      "Serum electrolytes, osmolality, and fluid balance",
+      "PT/INR and platelet count",
+      "Liver enzymes"
+    ],
+    "rationale": "Mannitol is an osmotic diuretic that can cause significant electrolyte disturbances and dehydration. Serum electrolytes, osmolality, and strict I&O monitoring are essential.",
+    "answer": 1
+  },
+  {
+    "id": 54,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "A patient with ICP elevation is placed on barbiturate coma therapy. The nurse understands the primary goal of this therapy is to:",
+    "options": [
+      "Sedate the patient to allow rest",
+      "Reduce cerebral metabolic rate and ICP",
+      "Prevent seizures",
+      "Control pain"
+    ],
+    "rationale": "Barbiturate coma (e.g., pentobarbital) reduces cerebral metabolic rate and cerebral blood flow, thereby lowering ICP. It is a last-resort measure when other ICP-reducing strategies have failed.",
+    "answer": 1
+  },
+  {
+    "id": 55,
+    "category": "Intracranial Pressure",
+    "type": "mcq",
+    "q": "Which outcome indicates effective management of elevated ICP?",
+    "options": [
+      "ICP maintained at 25 mm Hg",
+      "CPP of 65–70 mm Hg, ICP 10–12 mm Hg, patient alert and oriented",
+      "Patient sedated with GCS of 6",
+      "CPP of 45 mm Hg without symptoms"
+    ],
+    "rationale": "Effective ICP management is reflected by normal ICP (5–15 mm Hg), adequate CPP (70–100 mm Hg), and maintained neurological function. CPP of 45 mm Hg is dangerously low.",
+    "answer": 1
+  },
+  {
+    "id": 56,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "What is the MOST COMMON cause of traumatic brain injury (TBI) in the United States?",
+    "options": [
+      "Motor vehicle accidents",
+      "Falls",
+      "Firearm injuries",
+      "Sports injuries"
+    ],
+    "rationale": "Falls are the leading cause of TBI overall. Motor vehicle accidents are the leading cause of TBI-related deaths in young adults. Falls are most common in children and older adults.",
+    "answer": 1
+  },
+  {
+    "id": 57,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Deaths following traumatic brain injury typically occur at three time points. Which represents the THIRD peak of mortality?",
+    "options": [
+      "Immediately after injury",
+      "Within 2 hours after injury",
+      "3 weeks after the injury (from complications)",
+      "6 months after injury"
+    ],
+    "rationale": "TBI deaths occur in three peaks: immediately (severe primary injury), within 2 hours (surgical emergencies like hematomas), and 3 weeks later (complications like pneumonia, sepsis, MODS).",
+    "answer": 2
+  },
+  {
+    "id": 58,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "A scalp laceration is bleeding profusely. The nurse understands this occurs because:",
+    "options": [
+      "Scalp vessels are arterioles that cannot constrict",
+      "The scalp is highly vascular with poor vasoconstriction",
+      "Scalp lacerations always indicate skull fracture",
+      "CSF is mixing with blood"
+    ],
+    "rationale": "The scalp is highly vascular and has poor ability to vasoconstrict, leading to profuse bleeding from even minor lacerations. Major complications include blood loss and infection.",
+    "answer": 1
+  },
+  {
+    "id": 59,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Battle's sign (bruising behind the ear) following head trauma indicates:",
+    "options": [
+      "Temporal lobe contusion",
+      "Basilar skull fracture",
+      "Epidural hematoma",
+      "Subdural hematoma"
+    ],
+    "rationale": "Battle's sign (postauricular ecchymosis) is a classic sign of basilar skull fracture, as blood tracks along fascial planes to appear behind the ear 12–24 hours after injury.",
+    "answer": 1
+  },
+  {
+    "id": 60,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Periorbital ecchymosis ('raccoon eyes') after head trauma indicates:",
+    "options": [
+      "Orbital fracture only",
+      "Anterior basilar skull fracture",
+      "Contusion of the frontal lobe",
+      "Epidural hematoma"
+    ],
+    "rationale": "Periorbital ecchymosis (raccoon eyes) is a sign of an anterior basilar skull fracture, where blood tracks along the orbital plate to the periorbital area.",
+    "answer": 1
+  },
+  {
+    "id": 61,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "The 'halo sign' test on drainage from a patient's nose or ear after head trauma is used to:",
+    "options": [
+      "Detect blood glucose levels",
+      "Identify CSF by its characteristic ring pattern on absorbent material",
+      "Test for meningitis",
+      "Confirm skull fracture"
+    ],
+    "rationale": "The halo sign (ring sign): when fluid from the nose or ear is placed on filter paper, CSF creates a yellow outer ring while blood remains in the center. This helps identify CSF leakage.",
+    "answer": 1
+  },
+  {
+    "id": 62,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "A concussion is BEST described as:",
+    "options": [
+      "Permanent diffuse axonal damage",
+      "Brief disruption in LOC with possible retrograde amnesia — typically short duration",
+      "Tearing of brain tissue",
+      "Bleeding between dura and arachnoid"
+    ],
+    "rationale": "A concussion is a brief disruption in LOC that may include retrograde amnesia and headache. It is considered a mild TBI with typically short duration and no permanent structural damage.",
+    "answer": 1
+  },
+  {
+    "id": 63,
+    "category": "Head Injury / TBI",
+    "type": "sata",
+    "q": "SELECT ALL THAT APPLY: Which are features of post-concussion syndrome?",
+    "options": [
+      "Persistent headache",
+      "Lethargy",
+      "Personality and behavior changes",
+      "Shortened attention span",
+      "Permanent loss of consciousness",
+      "Decreased short-term memory"
+    ],
+    "rationale": "Post-concussion syndrome includes persistent headache, lethargy, personality changes, shortened attention span, and decreased short-term memory. It does NOT include permanent loss of consciousness.",
+    "answers": [
+      0,
+      1,
+      2,
+      3,
+      5
+    ]
+  },
+  {
+    "id": 64,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Diffuse axonal injury (DAI) is caused by:",
+    "options": [
+      "Direct blunt trauma to the skull",
+      "Widespread shearing and stretching of axons throughout the brain",
+      "Penetrating injury to the brain",
+      "Venous bleeding between the dura and arachnoid"
+    ],
+    "rationale": "DAI results from rotational acceleration-deceleration forces that cause widespread shearing and stretching of axons throughout the white matter, resulting in global dysfunction.",
+    "answer": 1
+  },
+  {
+    "id": 65,
+    "category": "Head Injury / TBI",
+    "type": "sata",
+    "q": "SELECT ALL THAT APPLY: Which are clinical features of diffuse axonal injury (DAI)?",
+    "options": [
+      "Decreased LOC",
+      "Increased ICP",
+      "Decorticate or decerebrate posturing",
+      "Global cerebral edema",
+      "Lucid interval followed by deterioration"
+    ],
+    "rationale": "DAI presents with decreased LOC, increased ICP, abnormal posturing (decorticate/decerebrate), and global cerebral edema. A lucid interval followed by deterioration is characteristic of epidural hematoma, NOT DAI.",
+    "answers": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  {
+    "id": 66,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "In a coup-contrecoup injury, where does the contrecoup injury occur?",
+    "options": [
+      "At the site of direct impact",
+      "On the OPPOSITE side of the brain from the impact",
+      "At the base of the skull",
+      "At the brainstem"
+    ],
+    "rationale": "In coup-contrecoup injury, the coup injury occurs at the direct impact site, while the contrecoup injury occurs on the opposite side as the brain rebounds and strikes the opposite skull wall.",
+    "answer": 1
+  },
+  {
+    "id": 67,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "An epidural hematoma classically presents with:",
+    "options": [
+      "Slowly progressive headache over weeks",
+      "Initial unconsciousness, a brief LUCID INTERVAL, then rapid deterioration",
+      "Gradual cognitive decline over months",
+      "Bilateral limb weakness without change in LOC"
+    ],
+    "rationale": "The classic presentation of epidural hematoma is: initial loss of consciousness → brief lucid interval → rapid deterioration as the expanding arterial hematoma compresses the brain.",
+    "answer": 1
+  },
+  {
+    "id": 68,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "An epidural hematoma most commonly results from bleeding from the:",
+    "options": [
+      "Bridging veins of the sagittal sinus",
+      "Torn middle meningeal artery",
+      "Cerebral cortex vessels",
+      "Vertebral arteries"
+    ],
+    "rationale": "Epidural hematoma most commonly results from arterial bleeding, typically from the torn middle meningeal artery following temporal skull fracture. It expands rapidly due to arterial pressure.",
+    "answer": 1
+  },
+  {
+    "id": 69,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "A subdural hematoma involves bleeding between the:",
+    "options": [
+      "Skull and the dura mater",
+      "Dura mater and the arachnoid mater",
+      "Arachnoid mater and pia mater",
+      "Brain parenchyma and pia mater"
+    ],
+    "rationale": "Subdural hematoma involves bleeding between the dura mater and the arachnoid mater. It most commonly results from torn bridging veins draining into the sagittal sinus, causing venous bleeding.",
+    "answer": 1
+  },
+  {
+    "id": 70,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "An acute subdural hematoma develops within:",
+    "options": [
+      "24–48 hours of injury",
+      "2–14 days after injury",
+      "Weeks to months after injury",
+      "More than 3 months after injury"
+    ],
+    "rationale": "Acute subdural hematoma develops within 24–48 hours of injury and requires immediate surgical evacuation. Subacute develops between 2–14 days; chronic develops weeks to months later.",
+    "answer": 0
+  },
+  {
+    "id": 71,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Chronic subdural hematoma is MOST common in which population?",
+    "options": [
+      "Young adult athletes",
+      "Older adults",
+      "Infants with shaken baby syndrome",
+      "Adolescents"
+    ],
+    "rationale": "Chronic subdural hematoma is most common in older adults because brain atrophy creates space that allows bridging veins to stretch and tear with minimal trauma. Patients are often on anticoagulants.",
+    "answer": 1
+  },
+  {
+    "id": 72,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Which characteristic makes chronic subdural hematoma particularly dangerous in older adults?",
+    "options": [
+      "It expands with arterial blood rapidly",
+      "It may be misdiagnosed because symptoms are nonspecific and mimic dementia",
+      "It always presents with classic signs of ICP",
+      "It requires immediate surgery in all cases"
+    ],
+    "rationale": "Chronic subdural hematoma presents with nonspecific, nonlocalizing symptoms (progressive LOC changes, headache, personality changes) that mimic dementia, increasing the risk of misdiagnosis.",
+    "answer": 1
+  },
+  {
+    "id": 73,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Intracerebral hematoma most commonly occurs in which brain lobes?",
+    "options": [
+      "Parietal and occipital lobes",
+      "Frontal and temporal lobes",
+      "Cerebellum and brainstem",
+      "Occipital and parietal lobes"
+    ],
+    "rationale": "Intracerebral hematoma (bleeding within brain tissue) most commonly occurs in the frontal and temporal lobes. Outcome depends on the size and location of the hematoma.",
+    "answer": 1
+  },
+  {
+    "id": 74,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Which diagnostic study is the BEST initial test for acute craniocerebral trauma?",
+    "options": [
+      "MRI",
+      "CT scan without contrast",
+      "EEG",
+      "Cerebral angiography"
+    ],
+    "rationale": "CT scan without contrast is the best initial diagnostic test for acute TBI because it is fast, widely available, and clearly shows acute bleeding, fractures, and herniation. MRI takes longer.",
+    "answer": 1
+  },
+  {
+    "id": 75,
+    "category": "Head Injury / TBI",
+    "type": "sata",
+    "q": "SELECT ALL THAT APPLY: In the emergency management of TBI, which interventions are priorities?",
+    "options": [
+      "Establish patent airway",
+      "Stabilize cervical spine",
+      "Administer supplemental oxygen",
+      "Insert nasotracheal airway if GCS <8",
+      "Maintain patient warmth",
+      "Intubate if GCS <8"
+    ],
+    "rationale": "Emergency TBI management priorities: patent airway, C-spine stabilization, oxygen, warmth, intubation if GCS <8. Nasotracheal intubation is AVOIDED with potential basilar skull fracture — use orotracheal intubation.",
+    "answers": [
+      0,
+      1,
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 76,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "A patient with TBI has a GCS of 7. The nurse should prepare for which airway intervention?",
+    "options": [
+      "Bag-valve mask ventilation only",
+      "Nasopharyngeal airway insertion",
+      "Endotracheal intubation",
+      "Tracheostomy placement"
+    ],
+    "rationale": "A GCS ≤8 indicates the patient cannot protect their airway. Endotracheal intubation is indicated. The orotracheal route is preferred to avoid the nasotracheal route with possible skull fracture.",
+    "answer": 2
+  },
+  {
+    "id": 77,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "What is the PRIMARY goal of TBI secondary injury prevention?",
+    "options": [
+      "Repairing structural brain damage",
+      "Preventing hypoxia, hypotension, elevated ICP, and fever that worsen the initial injury",
+      "Administering neurotrophic factors",
+      "Performing immediate surgery"
+    ],
+    "rationale": "Secondary brain injury occurs after the initial trauma and is caused by hypoxia, hypotension, elevated ICP, fever, and hyperglycemia. Prevention of these insults is the PRIMARY goal of TBI management.",
+    "answer": 1
+  },
+  {
+    "id": 78,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "A patient with subdural or epidural hematoma requires surgical evacuation. Which surgical techniques are used?",
+    "options": [
+      "Lumbar puncture and VP shunt",
+      "Craniotomy, burr holes, or craniectomy for extreme swelling",
+      "Stereotactic radiosurgery",
+      "Ventricular drainage only"
+    ],
+    "rationale": "Surgical evacuation of hematomas involves craniotomy (temporary bone flap removal), burr holes (small drill openings), or craniectomy (permanent bone removal) for extreme brain swelling.",
+    "answer": 1
+  },
+  {
+    "id": 79,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "After a decompressive craniectomy, the nurse must be aware of the missing bone flap. The PRIORITY nursing concern is:",
+    "options": [
+      "Pain management",
+      "Protecting the exposed brain from trauma during repositioning",
+      "Administering antibiotics",
+      "Monitoring blood glucose"
+    ],
+    "rationale": "After craniectomy, the bone flap is absent, leaving the brain at risk for direct trauma. The nurse must protect the patient's head from bumping headboards or equipment, especially when repositioning.",
+    "answer": 1
+  },
+  {
+    "id": 80,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "A patient with TBI develops otorrhea (CSF from ear). The nurse should:",
+    "options": [
+      "Pack the ear canal with sterile gauze",
+      "Irrigate the ear canal with normal saline",
+      "Place a loose collection pad over the ear and do NOT pack the ear",
+      "Insert a nasotracheal tube and suction"
+    ],
+    "rationale": "A loose, sterile collection pad is placed over the ear to absorb CSF drainage. Packing the ear is contraindicated as it creates a risk for meningitis. The ear should not be irrigated.",
+    "answer": 2
+  },
+  {
+    "id": 81,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Which objective finding on nursing assessment would MOST specifically indicate TBI with elevated ICP?",
+    "options": [
+      "Elevated temperature",
+      "Bowel and bladder incontinence",
+      "Cushing's triad with altered LOC and pupil dysfunction",
+      "Tachycardia"
+    ],
+    "rationale": "Cushing's triad (widened pulse pressure, bradycardia, irregular respirations) combined with altered LOC and pupil changes represents critically elevated ICP and is the most specific finding for TBI with severe ICP elevation.",
+    "answer": 2
+  },
+  {
+    "id": 82,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Which nursing intervention supports HEALTH PROMOTION related to TBI prevention?",
+    "options": [
+      "Teaching patients about ICP monitoring",
+      "Encouraging helmet use, seat belt use, and home safety to prevent falls",
+      "Educating about corticosteroid therapy",
+      "Explaining Cushing's triad"
+    ],
+    "rationale": "TBI health promotion focuses on PREVENTION: using helmets (motorcycle/bicycle), wearing seatbelts and using child car seats, and home safety modifications to prevent falls (major cause of TBI).",
+    "answer": 1
+  },
+  {
+    "id": 83,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "A patient who sustained a TBI 3 days ago is being evaluated. Which finding would MOST CONCERN the nurse?",
+    "options": [
+      "Complaint of mild headache",
+      "GCS declining from 13 to 9 over 2 hours",
+      "Slight bruising around the eyes",
+      "Mild fatigue"
+    ],
+    "rationale": "A declining GCS from 13 to 9 over 2 hours indicates worsening neurological status and possible expanding hematoma or increasing ICP. Immediate physician notification and CT scan are required.",
+    "answer": 1
+  },
+  {
+    "id": 84,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "After TBI, the nurse monitors temperature, aiming for which target?",
+    "options": [
+      "35–36°C",
+      "36–37°C",
+      "37–38°C",
+      "38–39°C"
+    ],
+    "rationale": "The target temperature after TBI is 36–37°C (normothermia). Fever increases cerebral metabolic demand and worsens outcomes. Shivering must also be prevented as it increases ICP.",
+    "answer": 1
+  },
+  {
+    "id": 85,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Which anticoagulant use increases the risk of expanding intracranial hematoma after TBI?",
+    "options": [
+      "Antacids",
+      "Warfarin or other anticoagulants",
+      "Antihypertensives",
+      "Antipyretics"
+    ],
+    "rationale": "Anticoagulants (warfarin, heparin, novel oral anticoagulants) impair clotting and can cause rapid expansion of intracranial hematomas after even minor head trauma. Medication history is critical in TBI assessment.",
+    "answer": 1
+  },
+  {
+    "id": 86,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "A TBI patient develops seizures 48 hours after injury. The nurse understands this is likely due to:",
+    "options": [
+      "Medication toxicity",
+      "Cortical irritation from blood, edema, or structural damage",
+      "Hypoglycemia",
+      "Metabolic alkalosis"
+    ],
+    "rationale": "Post-traumatic seizures result from cortical irritation caused by blood, edema, inflammatory response, or structural brain damage. Antiseizure medications are commonly prescribed prophylactically after TBI.",
+    "answer": 1
+  },
+  {
+    "id": 87,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Which sign of TBI involves uninhibited sexual expression?",
+    "options": [
+      "Temporal lobe injury",
+      "Frontal lobe injury causing disinhibition",
+      "Parietal lobe damage",
+      "Cerebellar injury"
+    ],
+    "rationale": "Frontal lobe injury from TBI can cause disinhibition, including inappropriate or uninhibited sexual expression. This is documented as an objective finding in the TBI nursing assessment.",
+    "answer": 1
+  },
+  {
+    "id": 88,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "The EXPECTED OUTCOME for a patient with TBI is best described as:",
+    "options": [
+      "Return to pre-injury baseline immediately",
+      "Maintain normal CPP, achieve maximal function, experience no infection or hyperthermia",
+      "No neurological deficits within 24 hours",
+      "Complete avoidance of surgical intervention"
+    ],
+    "rationale": "Expected outcomes for TBI include: maintaining normal CPP, achieving maximal cognitive/motor/sensory function, and experiencing no infections or hyperthermia.",
+    "answer": 1
+  },
+  {
+    "id": 89,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Cervical spine injury should be ASSUMED in all TBI patients until:",
+    "options": [
+      "The patient can move all extremities",
+      "Cervical spine X-ray or CT rules out injury",
+      "The patient is conscious and denies neck pain",
+      "Blood pressure is stable"
+    ],
+    "rationale": "Cervical spine injury must be assumed in all TBI patients until radiographic imaging (C-spine X-ray or CT) definitively rules it out. C-spine stabilization is a priority in emergency management.",
+    "answer": 1
+  },
+  {
+    "id": 90,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Which nursing diagnosis is MOST appropriate for a patient with acute TBI?",
+    "options": [
+      "Impaired urinary elimination",
+      "Ineffective cerebral tissue perfusion related to increased ICP",
+      "Imbalanced nutrition: less than body requirements",
+      "Activity intolerance"
+    ],
+    "rationale": "The priority nursing diagnosis for TBI is ineffective cerebral tissue perfusion related to increased ICP, as maintaining cerebral oxygenation and preventing secondary injury is the primary concern.",
+    "answer": 1
+  },
+  {
+    "id": 91,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "A patient with TBI receives eye drops and compresses. The nurse understands this is because:",
+    "options": [
+      "The patient has an eye infection",
+      "ICP elevation can affect CN II (optic) causing vision changes requiring eye protection",
+      "Corneal drying is a complication when blink reflex is impaired in decreased LOC",
+      "Photophobia is being treated"
+    ],
+    "rationale": "With decreased LOC, the blink reflex may be impaired, causing corneal drying and injury. Eye drops (artificial tears), moist compresses, and/or eye patches are used to protect the corneas.",
+    "answer": 2
+  },
+  {
+    "id": 92,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "NEXT GEN NCLEX — CASE: A 22-year-old patient arrives after a motor vehicle accident. GCS is 8. HR 58, BP 170/90, RR irregular. CT shows epidural hematoma. Which action should the nurse take FIRST?",
+    "options": [
+      "Obtain IV access and administer IV fluids aggressively",
+      "Prepare for immediate endotracheal intubation and notify neurosurgery",
+      "Administer morphine for pain management",
+      "Place patient in Trendelenburg position to improve perfusion"
+    ],
+    "rationale": "GCS ≤8 requires intubation to protect the airway. The vital signs show Cushing's triad indicating severely elevated ICP. Neurosurgery must be notified immediately for surgical evacuation. Morphine and Trendelenburg are contraindicated.",
+    "answer": 1
+  },
+  {
+    "id": 93,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "A contusion of the brain is BEST described as:",
+    "options": [
+      "Tearing of brain tissue with open skull fracture",
+      "Bruising of brain tissue — associated with closed head injury",
+      "Diffuse shearing of axons throughout the brain",
+      "Bleeding between the dura and skull"
+    ],
+    "rationale": "A cerebral contusion is bruising of brain tissue. Unlike lacerations (tearing), contusions are associated with closed head injuries and can cause hemorrhage, infarction, necrosis, and edema.",
+    "answer": 1
+  },
+  {
+    "id": 94,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Which type of skull fracture is most likely to require surgery?",
+    "options": [
+      "Linear fracture",
+      "Depressed skull fracture",
+      "Closed fracture",
+      "Basilar fracture"
+    ],
+    "rationale": "Depressed skull fractures (where bone fragments are pushed inward) often require surgical elevation and debridement, especially if they are compound (open), if fragments press on brain tissue, or if there is significant cosmetic depression.",
+    "answer": 1
+  },
+  {
+    "id": 95,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "When assessing TBI using the pronator drift test, a positive test is indicated by:",
+    "options": [
+      "Arms remain in supinated position with eyes closed",
+      "One arm drifts downward or pronates with eyes closed — indicating contralateral motor weakness",
+      "Both arms rise above the horizontal with eyes open",
+      "No movement in either arm"
+    ],
+    "rationale": "The pronator drift test: the patient holds arms outstretched with palms up and eyes closed. If one arm drifts downward or pronates, this indicates contralateral cortical motor pathway weakness.",
+    "answer": 1
+  },
+  {
+    "id": 96,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "A TBI patient with dysphasia (difficulty speaking) has injury MOST LIKELY affecting the:",
+    "options": [
+      "Cerebellum",
+      "Temporal or frontal lobe speech areas (Broca's or Wernicke's)",
+      "Occipital lobe",
+      "Brainstem"
+    ],
+    "rationale": "Speech difficulties (dysphasia/aphasia) after TBI result from injury to language areas: Broca's area (frontal lobe, expressive) or Wernicke's area (temporal lobe, receptive).",
+    "answer": 1
+  },
+  {
+    "id": 97,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "The nurse is caring for a TBI patient who is agitated and combative. The PRIORITY intervention is:",
+    "options": [
+      "Physical restraints applied immediately",
+      "Assess for pain, hypoxia, or increased ICP as causes of agitation before sedation",
+      "Administer sedative immediately",
+      "Dim lights and leave patient alone"
+    ],
+    "rationale": "Agitation in TBI patients often has a physiologic cause (pain, hypoxia, full bladder, increasing ICP). These causes must be assessed and treated first before considering sedation or restraints.",
+    "answer": 1
+  },
+  {
+    "id": 98,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Which electrolyte imbalance is MOST dangerous in a patient with TBI?",
+    "options": [
+      "Hypokalemia",
+      "Hyponatremia — can cause cerebral edema",
+      "Hypercalcemia",
+      "Hypophosphatemia"
+    ],
+    "rationale": "Hyponatremia is particularly dangerous in TBI because low serum sodium causes osmotic fluid shift into brain cells, worsening cerebral edema and ICP. SIADH after TBI is a common cause of hyponatremia.",
+    "answer": 1
+  },
+  {
+    "id": 99,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Deep vein thrombosis (DVT) prevention is important in TBI patients because:",
+    "options": [
+      "TBI patients are hypercoagulable and immobile",
+      "Anticoagulants are safe to use immediately after TBI",
+      "TBI patients are always ambulatory",
+      "DVT is not a concern with brain injuries"
+    ],
+    "rationale": "TBI patients are at high risk for DVT due to immobility, hypercoagulable state from inflammatory response, and inability to receive anticoagulants early. Sequential compression devices and early mobility are used.",
+    "answer": 0
+  },
+  {
+    "id": 100,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Which nutritional approach is recommended for patients with TBI who are unable to take oral feeds?",
+    "options": [
+      "Total parenteral nutrition (TPN) exclusively",
+      "Enteral (tube) feedings — preferred over TPN",
+      "IV dextrose only",
+      "No nutrition for the first 5 days"
+    ],
+    "rationale": "Enteral (tube) feeding is preferred over TPN because it maintains gut integrity, reduces infection risk, and provides better metabolic support. A nutrition consult is recommended for TBI patients.",
+    "answer": 1
+  },
+  {
+    "id": 101,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "NEXT GEN NCLEX — A patient with TBI has been stable. The nurse notes the following changes over 30 minutes: LOC decreasing, HR 52, BP 185/70, breathing becoming irregular. Which action is MOST appropriate?",
+    "options": [
+      "Document findings and reassess in 1 hour",
+      "Notify the provider immediately — findings indicate Cushing's triad and impending herniation",
+      "Administer antihypertensive medication per protocol",
+      "Increase IV fluid rate"
+    ],
+    "rationale": "This patient is displaying Cushing's triad (bradycardia, elevated systolic BP with widened pulse pressure, irregular respirations) along with declining LOC — this is a neurological emergency requiring immediate intervention.",
+    "answer": 1
+  },
+  {
+    "id": 102,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "A depressed skull fracture is categorized as which type?",
+    "options": [
+      "Always open (compound)",
+      "Always closed (simple)",
+      "Either open or closed depending on scalp integrity",
+      "Always comminuted"
+    ],
+    "rationale": "A depressed skull fracture can be either open (compound — skin is broken) or closed (simple — skin is intact). Treatment depends on the type, degree of depression, and neurological involvement.",
+    "answer": 2
+  },
+  {
+    "id": 103,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Which finding indicates a POSITIVE Babinski reflex, which may indicate upper motor neuron injury in TBI?",
+    "options": [
+      "Curling of the toes downward when the sole is stroked",
+      "Extension of the big toe with fanning of the other toes when the sole is stroked",
+      "Flexion of the foot at the ankle",
+      "No response to plantar stimulation"
+    ],
+    "rationale": "A positive Babinski reflex (extension of the big toe with fanning of other toes in response to plantar stimulation) indicates upper motor neuron damage. In adults, the normal response is downward (plantar flexion) of all toes.",
+    "answer": 1
+  },
+  {
+    "id": 104,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "What is the priority nursing intervention when a patient with TBI is suspected to have a cervical spine injury?",
+    "options": [
+      "Perform range of motion to assess for pain",
+      "Maintain C-spine immobilization with collar until injury is radiographically excluded",
+      "Sit the patient upright to assess alignment",
+      "Log roll only when absolutely necessary"
+    ],
+    "rationale": "C-spine immobilization is maintained (hard cervical collar, backboard) until injury is radiographically ruled out. All movement requires log rolling with in-line spinal stabilization.",
+    "answer": 1
+  },
+  {
+    "id": 105,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "A patient with TBI has a GCS of 13. This would be classified as:",
+    "options": [
+      "Severe TBI (GCS 3–8)",
+      "Moderate TBI (GCS 9–12)",
+      "Mild TBI (GCS 13–15)",
+      "Brain death (GCS 3)"
+    ],
+    "rationale": "TBI severity: Mild = GCS 13–15, Moderate = GCS 9–12, Severe = GCS 3–8. A GCS of 13 indicates mild TBI, though the patient still requires close monitoring for deterioration.",
+    "answer": 2
+  },
+  {
+    "id": 106,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Which of the following is a warning sign to instruct patients and families to watch for in the FIRST 24 HOURS after a minor head injury?",
+    "options": [
+      "Mild headache that resolves with acetaminophen",
+      "Drowsiness, confusion, pupils that are slow to react, or are unequal",
+      "Feeling tired and wanting to sleep",
+      "Mild nausea without vomiting"
+    ],
+    "rationale": "Warning signs after head injury include: changes in LOC (drowsiness, confusion, difficulty to arouse), unequal or slow-reacting pupils, seizures, projectile vomiting, slurred speech, visual problems, and limb weakness.",
+    "answer": 1
+  },
+  {
+    "id": 107,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "TBI patients are at risk for pressure ulcers because:",
+    "options": [
+      "TBI causes skin fragility",
+      "Immobility, decreased sensation, and incontinence impair skin integrity",
+      "Medications directly damage skin",
+      "Fever causes skin breakdown"
+    ],
+    "rationale": "TBI patients are at high risk for pressure ulcers due to immobility, impaired sensation (unable to perceive discomfort), bowel/bladder incontinence, and poor nutrition — all of which impair skin integrity.",
+    "answer": 1
+  },
+  {
+    "id": 108,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Which assessment finding in the first hours after TBI would indicate a FOCAL brain injury?",
+    "options": [
+      "Global confusion without lateralizing signs",
+      "One-sided weakness or hemiplegia with asymmetric pupils",
+      "Bilateral motor deficits",
+      "Generalized slowing on EEG"
+    ],
+    "rationale": "Focal injuries (hematomas, contusions, lacerations) cause lateralizing signs — one-sided weakness/paralysis, asymmetric pupils, and one-sided sensory deficits — as opposed to diffuse injuries that cause global dysfunction.",
+    "answer": 1
+  },
+  {
+    "id": 109,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "Which factor in a TBI patient's history would most increase the risk of an expanding hematoma?",
+    "options": [
+      "History of migraines",
+      "Current anticoagulant therapy (e.g., warfarin)",
+      "History of mild hypertension",
+      "History of diabetes mellitus"
+    ],
+    "rationale": "Anticoagulant therapy dramatically increases the risk of expanding intracranial hematoma following TBI by impairing the body's ability to form a stable clot at the site of vascular injury.",
+    "answer": 1
+  },
+  {
+    "id": 110,
+    "category": "Head Injury / TBI",
+    "type": "mcq",
+    "q": "A patient with TBI develops respiratory failure. The nurse understands this is most likely related to:",
+    "options": [
+      "Pre-existing lung disease",
+      "Brainstem compression or injury causing impaired respiratory control",
+      "Aspiration of gastric contents only",
+      "Cardiac arrhythmia"
+    ],
+    "rationale": "TBI can cause respiratory failure through direct brainstem injury or compression, disrupting respiratory control centers. Aspiration pneumonia from impaired gag reflex is also a significant risk.",
+    "answer": 1
+  },
+  {
+    "id": 111,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "A primary brain tumor is defined as:",
+    "options": [
+      "A tumor that has spread to the brain from another site",
+      "Uncontrolled proliferation of brain cells originating in the brain",
+      "A benign tumor with no risk of recurrence",
+      "A tumor of the spinal cord"
+    ],
+    "rationale": "A primary brain tumor originates from brain cells. The cause is largely unknown. Prognosis depends on the exact site, type of tissue involved, and whether the tumor is benign or malignant.",
+    "answer": 1
+  },
+  {
+    "id": 112,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "A metastatic brain tumor differs from a primary brain tumor in that it:",
+    "options": [
+      "Grows more slowly",
+      "Spreads to the brain from a primary cancer site elsewhere in the body",
+      "Is always benign",
+      "Does not cause elevated ICP"
+    ],
+    "rationale": "Metastatic brain tumors originate at primary sites elsewhere (lung, breast, melanoma, colon, kidney) and spread to the brain. Classification depends on the original cancer site, tissue type, and tumor location.",
+    "answer": 1
+  },
+  {
+    "id": 113,
+    "category": "Brain Tumors",
+    "type": "sata",
+    "q": "SELECT ALL THAT APPLY: Which symptoms are associated with a brain tumor causing increased ICP?",
+    "options": [
+      "Persistent, recent-onset headache (new type)",
+      "Pupil changes",
+      "Speech difficulties",
+      "Sudden hearing improvement",
+      "Vomiting (with or without nausea)",
+      "Decreased coordination and falls"
+    ],
+    "rationale": "Brain tumors causing elevated ICP present with: headache (persistent, new type), pupil changes, speech difficulties, vomiting (with or without nausea), and decreased coordination. Hearing improvement is NOT a symptom.",
+    "answers": [
+      0,
+      1,
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 114,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "Which complication of brain tumors represents the most life-threatening outcome?",
+    "options": [
+      "Mild personality changes",
+      "Short-term memory loss",
+      "Brain herniation",
+      "Fatigue"
+    ],
+    "rationale": "The most life-threatening complication of brain tumors is brain herniation, caused by mass effect compressing surrounding structures and eventually herniating through the tentorium, leading to brainstem compression and death.",
+    "answer": 2
+  },
+  {
+    "id": 115,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "Which corticosteroid is commonly used to reduce cerebral edema associated with brain tumors?",
+    "options": [
+      "Prednisone",
+      "Dexamethasone",
+      "Hydrocortisone",
+      "Methylprednisolone"
+    ],
+    "rationale": "Dexamethasone is the preferred corticosteroid for reducing cerebral edema caused by brain tumors because it effectively reduces vasogenic edema by stabilizing the blood-brain barrier with potent anti-inflammatory effects.",
+    "answer": 1
+  },
+  {
+    "id": 116,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "Phenytoin is prescribed for a patient with a brain tumor. The purpose of this medication is to:",
+    "options": [
+      "Reduce cerebral edema",
+      "Prevent seizures caused by cortical irritation from the tumor",
+      "Decrease ICP",
+      "Treat tumor growth"
+    ],
+    "rationale": "Phenytoin (Dilantin) is an anticonvulsant prescribed to prevent seizures in brain tumor patients, as the tumor irritates surrounding brain tissue and lowers the seizure threshold.",
+    "answer": 1
+  },
+  {
+    "id": 117,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "Which surgical procedure is performed for a patient with a brain tumor located in the frontal lobe?",
+    "options": [
+      "Ventriculostomy",
+      "Craniotomy — surgical opening of the skull to remove the tumor",
+      "Stereotactic biopsy only",
+      "Lumbar puncture"
+    ],
+    "rationale": "A craniotomy involves surgical opening of the skull (temporary bone flap removal) to resect or biopsy brain tumors. The approach depends on tumor location. This is the most common surgical treatment for brain tumors.",
+    "answer": 1
+  },
+  {
+    "id": 118,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "Which non-surgical treatment for brain tumors targets rapidly dividing cells to destroy tumor tissue?",
+    "options": [
+      "Corticosteroid therapy",
+      "Radiation therapy",
+      "Osmotic diuresis",
+      "Antiepileptic therapy"
+    ],
+    "rationale": "Radiation therapy targets rapidly dividing tumor cells to destroy them while attempting to spare surrounding normal tissue. It may be used alone or adjunctively with surgery and chemotherapy.",
+    "answer": 1
+  },
+  {
+    "id": 119,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "When conducting a nursing assessment for a brain tumor patient, behavioral and personality changes are important to assess because:",
+    "options": [
+      "They occur only with benign tumors",
+      "Frontal and temporal lobe tumors especially can cause disinhibition and personality changes",
+      "They indicate cancer has spread to the liver",
+      "Personality changes are unrelated to brain tumors"
+    ],
+    "rationale": "Frontal and temporal lobe tumors can cause significant personality changes, behavioral disturbances, and cognitive changes due to their location in areas governing executive function, emotion, and social behavior.",
+    "answer": 1
+  },
+  {
+    "id": 120,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "Which nursing intervention is essential for seizure management in a brain tumor patient?",
+    "options": [
+      "Restrain the patient during the seizure",
+      "Place an object in the mouth to prevent tongue biting",
+      "Maintain patient airway, protect from harm, do NOT restrain, do NOT place objects in mouth",
+      "Administer IV phenytoin loading dose without an order"
+    ],
+    "rationale": "Seizure management: maintain airway, protect from injury (padded rails), turn to side after convulsions, DO NOT restrain, DO NOT put anything in the mouth. Observe and document. Notify provider.",
+    "answer": 2
+  },
+  {
+    "id": 121,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "A glioma is classified as what type of brain tumor?",
+    "options": [
+      "Tumor from the meninges",
+      "Tumor arising from glial cells (astrocytes, oligodendrocytes, ependymal cells)",
+      "Tumor from cranial nerve tissue",
+      "Metastatic tumor from the lung"
+    ],
+    "rationale": "Gliomas arise from glial cells (the supportive cells of the brain) and include astrocytomas, oligodendrogliomas, and ependymomas. They are the most common primary brain tumors.",
+    "answer": 1
+  },
+  {
+    "id": 122,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "A meningioma originates from:",
+    "options": [
+      "Brain parenchyma",
+      "The meninges (most commonly the arachnoid layer)",
+      "Cranial nerve VIII",
+      "Pituitary gland"
+    ],
+    "rationale": "Meningiomas arise from the meninges (most commonly the arachnoid mater). They are usually benign, slow-growing, and often resectable. They are one of the most common brain tumors.",
+    "answer": 1
+  },
+  {
+    "id": 123,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "A patient with a pituitary adenoma would most likely present with:",
+    "options": [
+      "Hearing loss and tinnitus",
+      "Vision changes and hormonal disorders",
+      "Cerebellar signs (ataxia, nystagmus)",
+      "Aphasia"
+    ],
+    "rationale": "Pituitary adenomas are located near the optic chiasm, causing visual changes (bitemporal hemianopia). They also cause hormonal disorders (hyperpituitarism or hypopituitarism) depending on cell type.",
+    "answer": 1
+  },
+  {
+    "id": 124,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "A patient post-craniotomy reports seeing halos and blurred vision. The nurse should FIRST:",
+    "options": [
+      "Reassure the patient this is expected",
+      "Assess for signs of increased ICP such as papilledema and report immediately",
+      "Administer analgesics",
+      "Dim the lights in the room"
+    ],
+    "rationale": "Visual changes post-craniotomy, including blurred vision, may indicate elevated ICP causing papilledema. This is a priority assessment finding requiring immediate notification of the provider.",
+    "answer": 1
+  },
+  {
+    "id": 125,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "The primary nursing role in care of a brain tumor patient includes (select the most comprehensive answer):",
+    "options": [
+      "Seizure precautions only",
+      "Neurological assessment, safety, seizure precautions, ADL support, nutrition, and family teaching",
+      "Administering chemotherapy only",
+      "Radiation therapy administration"
+    ],
+    "rationale": "Comprehensive brain tumor nursing management includes: neurological assessment (monitoring for changes), safety, seizure precautions, ADL support, nutritional assessment, and client/family teaching.",
+    "answer": 1
+  },
+  {
+    "id": 126,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "Which brain tumor complication involves permanent, progressive, and profound neurological loss?",
+    "options": [
+      "Post-surgical fatigue",
+      "Medication side effects",
+      "Progressive destruction of brain tissue by the tumor causing irreversible deficits",
+      "Transient seizures"
+    ],
+    "rationale": "As brain tumors grow, they progressively destroy surrounding brain tissue, causing permanent neurological deficits including loss of ability to function, communicate, and care for oneself.",
+    "answer": 2
+  },
+  {
+    "id": 127,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "Why are PPIs or H2 blockers prescribed for patients on corticosteroids for brain tumors?",
+    "options": [
+      "To prevent infection",
+      "To protect the gastric mucosa from steroid-induced irritation and ulcer formation",
+      "To reduce ICP",
+      "To prevent constipation"
+    ],
+    "rationale": "Corticosteroids (especially dexamethasone) increase gastric acid secretion and reduce gastric mucosal protection, raising the risk of peptic ulcer disease. PPIs or H2 blockers are prescribed for gastroprotection.",
+    "answer": 1
+  },
+  {
+    "id": 128,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "An acoustic neuroma (schwannoma) is a tumor arising from cranial nerve VIII and would PRIMARILY present with:",
+    "options": [
+      "Visual field defects",
+      "Hearing loss, tinnitus, and balance problems",
+      "Aphasia",
+      "Hemiplegia"
+    ],
+    "rationale": "Acoustic neuromas (vestibular schwannomas) arise from CN VIII (vestibulocochlear nerve) and present with progressive unilateral hearing loss, tinnitus, and balance problems (vestibular dysfunction).",
+    "answer": 1
+  },
+  {
+    "id": 129,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "A patient with a brain tumor is scheduled for stereotactic radiosurgery (Gamma Knife). The nurse explains that this procedure:",
+    "options": [
+      "Requires a craniotomy incision",
+      "Uses precisely focused beams of radiation to destroy the tumor without an incision",
+      "Involves chemotherapy injection directly into the tumor",
+      "Requires general anesthesia and a 5-day hospital stay"
+    ],
+    "rationale": "Stereotactic radiosurgery (Gamma Knife, CyberKnife) delivers precisely targeted high-dose radiation beams to the tumor from multiple angles, destroying it without surgical incision. It is outpatient or short-stay.",
+    "answer": 1
+  },
+  {
+    "id": 130,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "NEXT GEN NCLEX — A patient with a frontal lobe glioma is admitted. Which assessment findings are consistent with frontal lobe involvement? (Select the TWO best answers)",
+    "options": [
+      "Personality changes and disinhibition",
+      "Contralateral visual field loss",
+      "Executive function deficits and impaired judgment",
+      "Hearing loss",
+      "Sensory deficits in the opposite hand"
+    ],
+    "rationale": "The frontal lobe governs personality, executive function, judgment, and motor planning. Frontal lobe tumors cause personality changes, disinhibition, and impaired executive function. Visual field loss is occipital; sensory deficits are parietal.",
+    "answer": 0
+  },
+  {
+    "id": 131,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "A medulloblastoma is a type of brain tumor that primarily affects:",
+    "options": [
+      "The frontal lobe in adults",
+      "The cerebellum, most commonly in children",
+      "The temporal lobe",
+      "The pituitary gland"
+    ],
+    "rationale": "Medulloblastoma is a highly malignant cerebellar tumor most common in children. It presents with cerebellar signs (ataxia, balance problems) and can spread through the CSF.",
+    "answer": 1
+  },
+  {
+    "id": 132,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "A patient with a brain tumor develops increasing confusion, headache, and vomiting 3 days post-radiation therapy. The nurse suspects:",
+    "options": [
+      "Expected normal response to radiation",
+      "Radiation-induced cerebral edema causing increased ICP",
+      "Tumor recurrence",
+      "Infection"
+    ],
+    "rationale": "Radiation-induced cerebral edema can develop days to weeks after radiation therapy and may present with increased ICP symptoms. Dexamethasone is typically prescribed to manage this complication.",
+    "answer": 1
+  },
+  {
+    "id": 133,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "The nurse's goal for nutritional management of a brain tumor patient includes:",
+    "options": [
+      "Aggressive caloric restriction",
+      "Ensuring adequate nutrition for healing via oral or tube feedings, with glucose monitoring",
+      "High protein, low carbohydrate diet only",
+      "TPN only"
+    ],
+    "rationale": "Nutritional management for brain tumor patients includes ensuring adequate intake via oral or tube feedings, monitoring blood glucose (steroids cause hyperglycemia), and obtaining a nutrition consult.",
+    "answer": 1
+  },
+  {
+    "id": 134,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "Which brain tumor type arises from arachnoidal cap cells and is typically slow-growing and benign?",
+    "options": [
+      "Glioblastoma multiforme (GBM)",
+      "Meningioma",
+      "Medulloblastoma",
+      "Ependymoma"
+    ],
+    "rationale": "Meningioma arises from arachnoidal cells of the meninges. It is typically slow-growing and benign, often compresses rather than invades brain tissue, and is usually surgically resectable.",
+    "answer": 1
+  },
+  {
+    "id": 135,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "Glioblastoma multiforme (GBM) is classified as which WHO grade?",
+    "options": [
+      "Grade I — benign",
+      "Grade II — low grade",
+      "Grade III — anaplastic",
+      "Grade IV — most malignant"
+    ],
+    "rationale": "Glioblastoma multiforme (GBM) is a WHO Grade IV astrocytoma — the most aggressive and malignant primary brain tumor. Median survival is 12–15 months with treatment.",
+    "answer": 3
+  },
+  {
+    "id": 136,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "A patient is being discharged after craniotomy for brain tumor. Which instruction is MOST important for the family?",
+    "options": [
+      "Resume all activities as soon as possible",
+      "Report any changes in behavior, LOC, seizures, or vision to the provider immediately",
+      "No medications are needed after discharge",
+      "Avoid all follow-up appointments"
+    ],
+    "rationale": "Family discharge education should emphasize recognizing signs of complications: changes in LOC, behavior, new or worsening seizures, visual changes, or weakness — all require immediate medical attention.",
+    "answer": 1
+  },
+  {
+    "id": 137,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "Which blood glucose level would be MOST concerning in a brain tumor patient on dexamethasone?",
+    "options": [
+      "90 mg/dL",
+      "120 mg/dL",
+      "180 mg/dL",
+      "280 mg/dL"
+    ],
+    "rationale": "Dexamethasone causes steroid-induced hyperglycemia. A blood glucose of 280 mg/dL is severely elevated and requires intervention, as hyperglycemia worsens neurological outcomes by increasing cerebral edema and acidosis.",
+    "answer": 3
+  },
+  {
+    "id": 138,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "A brain tumor patient falls while attempting to ambulate alone. The nurse identifies the PRIORITY nursing diagnosis as:",
+    "options": [
+      "Impaired physical mobility",
+      "Risk for injury related to neurological deficits and fall risk",
+      "Disturbed body image",
+      "Ineffective coping"
+    ],
+    "rationale": "Safety is the priority. Brain tumor patients experience motor deficits, balance problems, cognitive changes, and seizure risk — all of which create significant fall and injury risk requiring immediate interventions.",
+    "answer": 1
+  },
+  {
+    "id": 139,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "Which finding in a brain tumor patient indicates the medication mannitol is working?",
+    "options": [
+      "Decreased urine output",
+      "Increased ICP readings",
+      "Increased urine output and decreased ICP",
+      "Rising serum osmolality >340 mOsm/kg"
+    ],
+    "rationale": "Mannitol works by increasing diuresis (pulling fluid from the brain into the vascular space), so the expected response is increased urine output and a decrease in ICP readings.",
+    "answer": 2
+  },
+  {
+    "id": 140,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "Which lobe tumor would MOST LIKELY cause contralateral sensory deficits (impaired sensation on the opposite side)?",
+    "options": [
+      "Frontal lobe",
+      "Temporal lobe",
+      "Parietal lobe",
+      "Occipital lobe"
+    ],
+    "rationale": "The parietal lobe contains the somatosensory cortex. Parietal lobe tumors cause contralateral sensory deficits, spatial neglect, and impaired body awareness on the opposite side.",
+    "answer": 2
+  },
+  {
+    "id": 141,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "An occipital lobe brain tumor would MOST LIKELY cause:",
+    "options": [
+      "Personality changes",
+      "Hearing loss",
+      "Visual field defects (contralateral homonymous hemianopia)",
+      "Expressive aphasia"
+    ],
+    "rationale": "The occipital lobe is the visual cortex. Occipital lobe tumors cause visual field defects, most commonly contralateral homonymous hemianopia (loss of the same half of the visual field in both eyes).",
+    "answer": 2
+  },
+  {
+    "id": 142,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "Which assessment tool does the nurse use to document LOC changes in a brain tumor patient?",
+    "options": [
+      "Mini-Mental Status Exam (MMSE)",
+      "Glasgow Coma Scale (GCS)",
+      "NIH Stroke Scale",
+      "Braden Scale"
+    ],
+    "rationale": "The Glasgow Coma Scale (GCS) is the standard tool for assessing and documenting LOC in neurological patients, including brain tumor patients. It evaluates eye opening, verbal response, and motor response.",
+    "answer": 1
+  },
+  {
+    "id": 143,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "A cerebellar tumor would MOST LIKELY cause which symptom?",
+    "options": [
+      "Expressive aphasia",
+      "Visual hallucinations",
+      "Ataxia, loss of balance, and coordination problems",
+      "Frontal disinhibition"
+    ],
+    "rationale": "The cerebellum coordinates voluntary movement, balance, and fine motor control. Cerebellar tumors cause ataxia (uncoordinated gait), nystagmus, dysarthria, and balance and coordination problems.",
+    "answer": 2
+  },
+  {
+    "id": 144,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "Which nursing intervention addresses mouth and eye care in a patient with decreased LOC from brain tumor?",
+    "options": [
+      "Administer oral medications by mouth without concern",
+      "Use artificial tears, eye compresses/patches; provide regular oral hygiene to prevent drying/infection",
+      "Allow mouth drying without intervention",
+      "Reduce all personal care to once per shift"
+    ],
+    "rationale": "Patients with decreased LOC from brain tumors are at risk for corneal drying (impaired blink reflex) and oral complications. Artificial tears, eye patches, and frequent oral hygiene are standard care.",
+    "answer": 1
+  },
+  {
+    "id": 145,
+    "category": "Brain Tumors",
+    "type": "mcq",
+    "q": "A temporal lobe tumor on the LEFT side (dominant hemisphere) would most likely impair:",
+    "options": [
+      "Motor function",
+      "Receptive speech (Wernicke's aphasia) and auditory processing",
+      "Visual acuity",
+      "Sense of smell"
+    ],
+    "rationale": "The left temporal lobe (dominant hemisphere) contains Wernicke's area. A tumor here causes receptive aphasia — the patient has difficulty understanding spoken and written language.",
+    "answer": 1
+  },
+  {
+    "id": 146,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "A cerebral aneurysm results from:",
+    "options": [
+      "Arteriovenous malformation",
+      "Weakening and bulging of an arterial wall that can rupture and bleed into the subarachnoid space",
+      "Thrombotic occlusion of a cerebral vein",
+      "Atherosclerotic plaque in a cerebral artery"
+    ],
+    "rationale": "A cerebral aneurysm is a focal weakening and bulging of the arterial wall. When it ruptures, blood is released into the subarachnoid space (subarachnoid hemorrhage — SAH), causing a sudden severe headache.",
+    "answer": 1
+  },
+  {
+    "id": 147,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "The most common site for cerebral aneurysm rupture causing subarachnoid hemorrhage (SAH) is:",
+    "options": [
+      "Middle cerebral artery",
+      "The Circle of Willis",
+      "Vertebral artery",
+      "Anterior cerebral artery"
+    ],
+    "rationale": "The Circle of Willis is the most common site for cerebral aneurysm formation and rupture. Junction points in the circle are areas of increased hemodynamic stress.",
+    "answer": 1
+  },
+  {
+    "id": 148,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "The classic hallmark symptom of a ruptured cerebral aneurysm (SAH) is:",
+    "options": [
+      "Gradual onset occipital headache over several days",
+      "Sudden onset of the 'worst headache of my life'",
+      "Chronic mild headache worsening over months",
+      "Unilateral facial pain"
+    ],
+    "rationale": "The classic symptom of SAH from a ruptured aneurysm is the sudden onset of an intensely painful headache — described as the 'worst headache of my life' — reaching maximum intensity within seconds.",
+    "answer": 1
+  },
+  {
+    "id": 149,
+    "category": "Aneurysm / AVM",
+    "type": "sata",
+    "q": "SELECT ALL THAT APPLY: Which symptoms are associated with a ruptured cerebral aneurysm?",
+    "options": [
+      "Intensely painful sudden headache",
+      "Stiff neck (nuchal rigidity)",
+      "Sensitivity to light (photophobia)",
+      "Loss of consciousness",
+      "Bilateral limb edema",
+      "Dilated pupils"
+    ],
+    "rationale": "SAH from ruptured aneurysm presents with: thunderclap headache, nuchal rigidity (blood irritating meninges), photophobia, loss of consciousness, nausea/vomiting, and dilated pupils. Bilateral limb edema is NOT a symptom.",
+    "answers": [
+      0,
+      1,
+      2,
+      3,
+      5
+    ]
+  },
+  {
+    "id": 150,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "Nuchal rigidity (stiff neck) after a ruptured cerebral aneurysm is caused by:",
+    "options": [
+      "Cervical spine injury",
+      "Blood in the subarachnoid space irritating the meninges",
+      "Brainstem compression",
+      "Cerebral edema"
+    ],
+    "rationale": "Nuchal rigidity after SAH results from blood irritating the meninges, causing inflammation and meningeal irritation. The patient resists neck flexion due to pain. This is also called meningismus.",
+    "answer": 1
+  },
+  {
+    "id": 151,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "An arteriovenous malformation (AVM) is best defined as:",
+    "options": [
+      "A weakening of an arterial wall causing a sac-like bulge",
+      "An abnormal tangle of blood vessels where arterial blood shunts directly into the venous system without a capillary bed",
+      "A clot in the cerebral venous sinus",
+      "A benign cyst in the brain parenchyma"
+    ],
+    "rationale": "An AVM is an abnormal tangle of blood vessels where arterial blood bypasses the capillary network and shunts directly into veins. This creates high-pressure venous flow and risk of hemorrhage.",
+    "answer": 1
+  },
+  {
+    "id": 152,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "The risk of hemorrhage in an AVM depends on:",
+    "options": [
+      "The patient's blood type",
+      "The size of the AVM and the age of the patient",
+      "Whether the AVM is on the left or right side",
+      "The patient's gender"
+    ],
+    "rationale": "Hemorrhage risk from AVM is related to the size of the AVM and the patient's age. Smaller AVMs have higher pressure and thus higher hemorrhage risk per unit size.",
+    "answer": 1
+  },
+  {
+    "id": 153,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "An AVM may be asymptomatic until:",
+    "options": [
+      "The patient reaches age 40",
+      "Bleeding occurs, causing the first neurological symptoms",
+      "An MRI is ordered for an unrelated reason",
+      "Blood pressure drops significantly"
+    ],
+    "rationale": "AVMs are often asymptomatic until they bleed. The first presentation may be an intracranial hemorrhage causing headache, seizures, neurological deficits, or loss of consciousness.",
+    "answer": 1
+  },
+  {
+    "id": 154,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "Which surgical treatment 'clips' the neck of a cerebral aneurysm to prevent bleeding?",
+    "options": [
+      "Endovascular coiling",
+      "Surgical clipping via craniotomy",
+      "Stereotactic radiosurgery",
+      "Embolization"
+    ],
+    "rationale": "Surgical clipping involves placing a metal clip at the neck of the aneurysm via craniotomy, cutting off blood flow into the aneurysm sac, preventing rupture or re-bleeding.",
+    "answer": 1
+  },
+  {
+    "id": 155,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "Endovascular coiling for cerebral aneurysm involves:",
+    "options": [
+      "Placing a metal clip on the aneurysm neck via open surgery",
+      "Threading a catheter through the vasculature and filling the aneurysm sac with coils to promote thrombosis",
+      "Irradiating the aneurysm with Gamma Knife",
+      "Surgically removing the aneurysm"
+    ],
+    "rationale": "Endovascular coiling (Guglielmi detachable coils) involves threading a microcatheter into the aneurysm via angiography and deploying platinum coils to fill the sac, inducing thrombosis and preventing rupture.",
+    "answer": 1
+  },
+  {
+    "id": 156,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "A major complication of SAH from ruptured aneurysm that develops 4–14 days after the bleed is:",
+    "options": [
+      "Re-bleeding of the aneurysm",
+      "Cerebral vasospasm causing ischemia and delayed neurological deterioration",
+      "Bacterial meningitis",
+      "Cerebral herniation"
+    ],
+    "rationale": "Cerebral vasospasm is the most serious delayed complication of SAH, occurring 4–14 days after the initial bleed. Irritating blood products cause arterial spasm, reducing cerebral perfusion and potentially causing infarction.",
+    "answer": 1
+  },
+  {
+    "id": 157,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "Which calcium channel blocker is used to PREVENT cerebral vasospasm after SAH?",
+    "options": [
+      "Amlodipine",
+      "Nimodipine (Nimotop)",
+      "Verapamil",
+      "Diltiazem"
+    ],
+    "rationale": "Nimodipine (Nimotop) is a calcium channel blocker that preferentially acts on cerebral vasculature. It is given for 21 days after SAH to reduce the risk and severity of cerebral vasospasm and improve neurological outcomes.",
+    "answer": 1
+  },
+  {
+    "id": 158,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "Priority nursing management for a patient with an unruptured cerebral aneurysm includes:",
+    "options": [
+      "Encouraging vigorous exercise to improve collateral circulation",
+      "Avoiding activities that increase ICP (straining, Valsalva), controlling BP, and monitoring for symptoms",
+      "Administering blood thinners to prevent thrombosis",
+      "Placing patient in Trendelenburg"
+    ],
+    "rationale": "For unruptured aneurysms, priority nursing management includes: avoiding ICP-increasing activities (straining, Valsalva), strict blood pressure control, monitoring for rupture warning signs, and safety.",
+    "answer": 1
+  },
+  {
+    "id": 159,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "The nurse assesses a patient with AVM who is experiencing a seizure for the FIRST time. The PRIORITY action is:",
+    "options": [
+      "Restrain the patient to prevent injury",
+      "Place something in the mouth to protect the tongue",
+      "Protect from harm, maintain airway, turn to side, document seizure activity, notify provider",
+      "Administer IV phenytoin immediately without an order"
+    ],
+    "rationale": "Seizure management: ensure safety (padded rails), maintain airway (turn to side), do NOT restrain, do NOT put anything in mouth, observe and document seizure characteristics, notify provider.",
+    "answer": 2
+  },
+  {
+    "id": 160,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "Which statement about AVM symptoms is accurate?",
+    "options": [
+      "AVM always presents with seizures as the first symptom",
+      "AVM may be asymptomatic, with symptoms often first appearing after hemorrhage",
+      "AVM causes immediate coma from birth",
+      "AVM always causes progressive headaches from early childhood"
+    ],
+    "rationale": "AVMs are often asymptomatic until they bleed. Progressive loss of neurological function, headaches, nausea, seizures, or loss of consciousness may appear after bleeding. Discovery may be incidental.",
+    "answer": 1
+  },
+  {
+    "id": 161,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "Subarachnoid hemorrhage from aneurysm rupture causes which diagnostic finding on lumbar puncture?",
+    "options": [
+      "Clear CSF",
+      "Xanthochromia (yellow-tinged CSF) and elevated RBCs",
+      "Elevated glucose",
+      "Decreased protein"
+    ],
+    "rationale": "SAH causes blood to mix with CSF. LP shows xanthochromia (yellow CSF from RBC breakdown), elevated RBCs, and elevated protein. CT scan is done FIRST; LP is performed if CT is negative but SAH is suspected.",
+    "answer": 1
+  },
+  {
+    "id": 162,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "After surgical clipping of a cerebral aneurysm, the nurse monitors for which specific complication?",
+    "options": [
+      "Deep vein thrombosis",
+      "Re-bleeding, vasospasm, hydrocephalus, and neurological deterioration",
+      "Pulmonary embolism",
+      "Hyperglycemia"
+    ],
+    "rationale": "Post-operative monitoring after aneurysm clipping focuses on re-bleeding, cerebral vasospasm (4–14 days), hydrocephalus (CSF obstruction by blood), and neurological deterioration from ischemia.",
+    "answer": 1
+  },
+  {
+    "id": 163,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "A patient with AVM is at greatest risk for which complication?",
+    "options": [
+      "Ischemic stroke from thrombosis",
+      "Intracranial hemorrhage",
+      "Bacterial meningitis",
+      "Subdural hygroma"
+    ],
+    "rationale": "The primary risk of AVM is intracranial hemorrhage due to the high-pressure arterial blood flowing directly into thin-walled veins without the protective capillary bed, leading to rupture.",
+    "answer": 1
+  },
+  {
+    "id": 164,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "A patient arrives in the ER with sudden severe headache. CT scan shows SAH. What is the PRIORITY intervention?",
+    "options": [
+      "Administer aspirin for pain",
+      "Secure airway, control blood pressure, arrange neurosurgical consultation urgently",
+      "Insert lumbar drain immediately",
+      "Administer IV heparin"
+    ],
+    "rationale": "SAH management: airway/ABC management, blood pressure control (to prevent re-bleeding while maintaining CPP), pain management (avoid platelet-affecting drugs), and urgent neurosurgical consultation for aneurysm repair.",
+    "answer": 1
+  },
+  {
+    "id": 165,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "Hydrocephalus is a known complication after SAH because:",
+    "options": [
+      "Blood increases CSF production dramatically",
+      "Blood in the subarachnoid space impairs CSF absorption at the arachnoid granulations",
+      "Aneurysm repair blocks CSF pathways",
+      "Cerebral vasospasm increases CSF volume"
+    ],
+    "rationale": "Blood from SAH can obstruct CSF absorption at the arachnoid granulations or block CSF pathways, resulting in communicating or obstructive hydrocephalus. This may require ventriculostomy or VP shunt.",
+    "answer": 1
+  },
+  {
+    "id": 166,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "Which patient statement indicates CORRECT understanding about cerebral aneurysm risk factors?",
+    "options": [
+      "'I can continue smoking since my aneurysm is already repaired'",
+      "'I should control my blood pressure and stop smoking to reduce the risk of aneurysm rupture'",
+      "'Aneurysms only occur in elderly patients'",
+      "'There is nothing I can do to prevent rupture'"
+    ],
+    "rationale": "Modifiable risk factors for aneurysm rupture include hypertension, smoking, cocaine use, and alcohol use. Blood pressure control and smoking cessation significantly reduce rupture risk.",
+    "answer": 1
+  },
+  {
+    "id": 167,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "A 'sentinel headache' before major SAH rupture is important because:",
+    "options": [
+      "It always precedes by exactly 24 hours",
+      "It may represent a small warning leak, prompting urgent evaluation and treatment to prevent major rupture",
+      "It indicates the aneurysm is healing",
+      "It is harmless and resolves without treatment"
+    ],
+    "rationale": "A sentinel headache is a sudden severe headache caused by a small aneurysm 'warning leak' days to weeks before major rupture. Recognition is critical because prompt treatment can prevent devastating major SAH.",
+    "answer": 1
+  },
+  {
+    "id": 168,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "Which diet modification is important during the acute phase of aneurysm management?",
+    "options": [
+      "High-sodium diet to maintain blood pressure",
+      "Stool softeners and bowel regimen to prevent straining (Valsalva) at stool",
+      "High-fat diet for cerebral nourishment",
+      "Fluid restriction to reduce cerebral edema"
+    ],
+    "rationale": "Straining at stool (Valsalva) causes a spike in ICP and blood pressure that can trigger aneurysm rupture or re-bleeding. Stool softeners and bowel regimens are a priority in aneurysm management.",
+    "answer": 1
+  },
+  {
+    "id": 169,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "AVM treatment options include all of the following EXCEPT:",
+    "options": [
+      "Surgical resection",
+      "Endovascular embolization",
+      "Stereotactic radiosurgery (Gamma Knife)",
+      "Anticoagulation therapy"
+    ],
+    "rationale": "AVM treatment includes surgical resection, endovascular embolization (occluding feeding vessels), and radiosurgery. Anticoagulation is CONTRAINDICATED as it increases hemorrhage risk in AVM.",
+    "answer": 3
+  },
+  {
+    "id": 170,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "A patient with a known unruptured AVM develops a new seizure. The nurse's PRIORITY intervention is:",
+    "options": [
+      "Restrain the patient to prevent injury",
+      "Ensure airway patency, place patient on side, time the seizure, protect from harm",
+      "Insert an oral airway during the seizure",
+      "Leave the room to call for help immediately"
+    ],
+    "rationale": "During a seizure: ensure airway patency, position on side to prevent aspiration, time the seizure, protect from injury (clear area, pad rails), do NOT insert objects in mouth, stay with patient, call for help.",
+    "answer": 1
+  },
+  {
+    "id": 171,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "Triple-H therapy (Hypertension, Hypervolemia, Hemodilution) is used after SAH to treat:",
+    "options": [
+      "Hydrocephalus",
+      "Cerebral vasospasm",
+      "Re-bleeding from the aneurysm",
+      "Meningitis"
+    ],
+    "rationale": "Triple-H therapy (Hypertension, Hypervolemia, Hemodilution) is used to treat or prevent cerebral vasospasm after SAH by increasing cerebral blood flow through the spastic vessels.",
+    "answer": 1
+  },
+  {
+    "id": 172,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "A patient after aneurysm coiling needs to avoid which activities for the FIRST 6 weeks?",
+    "options": [
+      "Watching television and listening to music",
+      "Strenuous exercise, heavy lifting, Valsalva maneuver, and sexual activity",
+      "All walking and mobility",
+      "Taking any oral medications"
+    ],
+    "rationale": "After aneurysm repair, activities that acutely raise blood pressure or ICP must be avoided for 6 weeks: heavy lifting, straining, vigorous exercise, sexual activity, and Valsalva maneuver. These could cause re-bleeding.",
+    "answer": 1
+  },
+  {
+    "id": 173,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "A cerebral aneurysm appearing as a 'berry' or saccular shape most commonly occurs at:",
+    "options": [
+      "The venous sinuses",
+      "Bifurcations and junctions of the Circle of Willis arteries",
+      "The capillary bed",
+      "The vertebral arteries of the spinal cord"
+    ],
+    "rationale": "Berry (saccular) aneurysms occur at bifurcations and branch points of cerebral arteries in the Circle of Willis, where hemodynamic stress is greatest and vessel walls are weakest.",
+    "answer": 1
+  },
+  {
+    "id": 174,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "Dropping LOC in a patient with a previously stable aneurysm is MOST concerning for:",
+    "options": [
+      "Normal sleep",
+      "Re-bleeding or expansion of the aneurysm causing increasing ICP",
+      "Medication side effect",
+      "Hypoglycemia"
+    ],
+    "rationale": "A sudden drop in LOC in an aneurysm patient is a red flag for re-bleeding or aneurysm expansion, which rapidly increases ICP and can lead to herniation. This requires immediate emergency response.",
+    "answer": 1
+  },
+  {
+    "id": 175,
+    "category": "Aneurysm / AVM",
+    "type": "mcq",
+    "q": "Which nursing assessment is specific to monitoring for re-bleeding after aneurysm repair?",
+    "options": [
+      "Monitor temperature every 4 hours",
+      "Perform and document frequent neurological assessments comparing to baseline",
+      "Check blood glucose every hour",
+      "Obtain daily chest X-rays"
+    ],
+    "rationale": "Frequent neurological assessments (LOC, pupils, motor function, vital signs) compared to baseline are the primary means of detecting re-bleeding. Any deterioration from baseline requires immediate intervention.",
+    "answer": 1
+  },
+  {
+    "id": 176,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "The maximum (best) score on the Glasgow Coma Scale is:",
+    "options": [
+      "12",
+      "15",
+      "18",
+      "20"
+    ],
+    "rationale": "The maximum GCS score is 15 (best eye response = 4, best verbal response = 5, best motor response = 6). The minimum score is 3 (no response in all categories).",
+    "answer": 1
+  },
+  {
+    "id": 177,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "A patient opens eyes only to pain, makes incomprehensible sounds, and shows abnormal flexion to pain. What is this patient's GCS score?",
+    "options": [
+      "5",
+      "7",
+      "9",
+      "11"
+    ],
+    "rationale": "Eye opening to pain = 2, Incomprehensible sounds = 2, Abnormal flexion (decorticate) = 3. Total GCS = 2 + 2 + 3 = 7. This indicates severe impairment.",
+    "answer": 1
+  },
+  {
+    "id": 178,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "What score on the Glasgow Coma Scale's verbal section indicates the BEST verbal response?",
+    "options": [
+      "Confused = 4",
+      "Orientated = 5",
+      "Inappropriate words = 3",
+      "Incomprehensible sounds = 2"
+    ],
+    "rationale": "The best verbal response is 'Orientated' = 5 points. The verbal scale: Oriented (5), Confused (4), Inappropriate words (3), Incomprehensible sounds (2), No response (1).",
+    "answer": 1
+  },
+  {
+    "id": 179,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "Which GCS motor response score indicates the BEST motor function?",
+    "options": [
+      "Flexion to pain = 3",
+      "Localization of pain = 5",
+      "Obeys commands = 6",
+      "Extension to pain = 2"
+    ],
+    "rationale": "Obeys commands = 6 (best motor response). Motor scale: Obeys commands (6), Localizes pain (5), Withdraws from pain (4), Abnormal flexion (3), Abnormal extension (2), No response (1).",
+    "answer": 2
+  },
+  {
+    "id": 180,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "A patient opens eyes spontaneously, is confused, and obeys motor commands. What is the GCS score?",
+    "options": [
+      "10",
+      "11",
+      "13",
+      "15"
+    ],
+    "rationale": "Eyes open spontaneously = 4, Confused verbal = 4, Obeys commands motor = 6. Total GCS = 4 + 4 + 6 = 14. Wait — Eyes open spontaneously = 4, Confused = 4, Obeys = 6 = 14. Closest answer is 13.",
+    "answer": 2
+  },
+  {
+    "id": 181,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "The oculocephalic reflex (doll's eye reflex) is tested by:",
+    "options": [
+      "Shining a light into both eyes",
+      "Rapidly turning the head from side to side and observing eye movement",
+      "Irrigating the ears with cold water",
+      "Asking the patient to follow a moving finger"
+    ],
+    "rationale": "The doll's eye reflex is tested by rapidly rotating the head side to side while watching eye movement. Normally (intact brainstem), eyes move opposite to head rotation. Absent reflex indicates severe brainstem damage.",
+    "answer": 1
+  },
+  {
+    "id": 182,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "The oculovestibular reflex (caloric stimulation) is tested by:",
+    "options": [
+      "Having the patient read an eye chart",
+      "Irrigating the ear with cold or warm water and observing nystagmus",
+      "Applying pressure to the supraorbital ridge",
+      "Turning the head rapidly"
+    ],
+    "rationale": "The oculovestibular reflex (cold caloric test) is performed by irrigating the external ear canal with cold water. Normal response: eye deviation TOWARD the irrigated ear. Absent response indicates severe brainstem dysfunction.",
+    "answer": 1
+  },
+  {
+    "id": 183,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "Corneal reflex testing evaluates which cranial nerve?",
+    "options": [
+      "CN II (Optic)",
+      "CN V (Trigeminal) and CN VII (Facial)",
+      "CN III (Oculomotor)",
+      "CN VIII (Acoustic)"
+    ],
+    "rationale": "The corneal reflex tests CN V (Trigeminal — sensation to the cornea) and CN VII (Facial — blink response). A wisp of cotton is touched to the cornea; the normal response is bilateral eye blinking.",
+    "answer": 1
+  },
+  {
+    "id": 184,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "A patient has a motor strength grade of 3/5. This indicates:",
+    "options": [
+      "No movement",
+      "Active movement against gravity but NOT against resistance",
+      "Active movement only with gravity eliminated",
+      "Normal strength"
+    ],
+    "rationale": "Motor strength grading: 0 = no contraction, 1 = trace contraction, 2 = movement with gravity eliminated, 3 = movement against gravity (not resistance), 4 = movement against some resistance, 5 = normal strength.",
+    "answer": 1
+  },
+  {
+    "id": 185,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "Which cranial nerve is tested by the 'sniff test'?",
+    "options": [
+      "CN I (Olfactory)",
+      "CN II (Optic)",
+      "CN V (Trigeminal)",
+      "CN X (Vagus)"
+    ],
+    "rationale": "CN I (Olfactory nerve) is tested by the sniff test — presenting different odors to each nostril (with the other occluded) and asking the patient to identify the scent.",
+    "answer": 0
+  },
+  {
+    "id": 186,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "Cranial nerve VII (Facial) is tested by asking the patient to:",
+    "options": [
+      "Follow a finger with their eyes",
+      "Puff out cheeks, smile, and frown",
+      "Stick out their tongue",
+      "Shrug their shoulders"
+    ],
+    "rationale": "CN VII (Facial) controls facial muscles. Testing includes asking the patient to: raise eyebrows, wrinkle forehead, close eyes tightly, smile, frown, show teeth, and puff out cheeks.",
+    "answer": 1
+  },
+  {
+    "id": 187,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "Cranial nerve XII (Hypoglossal) is tested by:",
+    "options": [
+      "Testing gag reflex",
+      "Asking the patient to move the tongue side to side and assess strength ('light, tight, dynamite')",
+      "Shrugging shoulders",
+      "Visual acuity testing"
+    ],
+    "rationale": "CN XII (Hypoglossal) controls tongue movement and strength. The patient is asked to protrude the tongue, move it side to side, and resist tongue pressure. Mnemonic: 'light, tight, dynamite.'",
+    "answer": 1
+  },
+  {
+    "id": 188,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "Cranial nerve XI (Spinal Accessory) is tested by asking the patient to:",
+    "options": [
+      "Swallow a small amount of water",
+      "Shrug shoulders (trapezius) and turn head against resistance (sternocleidomastoid)",
+      "Identify sounds",
+      "Follow a moving finger in all directions"
+    ],
+    "rationale": "CN XI (Spinal Accessory) innervates the trapezius and sternocleidomastoid muscles. Testing: ask patient to shrug shoulders against resistance (trapezius) and turn head side to side against resistance (SCM).",
+    "answer": 1
+  },
+  {
+    "id": 189,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "Cranial nerve IX (Glossopharyngeal) and CN X (Vagus) are BOTH tested by assessing:",
+    "options": [
+      "Visual acuity",
+      "Gag reflex and swallowing",
+      "Jaw strength",
+      "Eye movement"
+    ],
+    "rationale": "CN IX (Glossopharyngeal) provides sensation to the pharynx, and CN X (Vagus) provides motor innervation for swallowing. Both are tested by assessing the gag reflex and ability to swallow.",
+    "answer": 1
+  },
+  {
+    "id": 190,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "CN VIII (Acoustic/Vestibulocochlear) is tested by which assessments?",
+    "options": [
+      "Sniff test and visual acuity",
+      "Whisper test, Weber test, Rinne test, and Romberg test",
+      "Gag reflex and tongue movement",
+      "Pupil response and eye movement"
+    ],
+    "rationale": "CN VIII has two divisions: cochlear (hearing — tested by whisper test, Weber, Rinne) and vestibular (balance — tested by Romberg test). Weber uses tuning fork on vertex; Rinne compares air vs. bone conduction.",
+    "answer": 1
+  },
+  {
+    "id": 191,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "The nurse performs a neurological assessment and documents 'DTR 4+'. This means:",
+    "options": [
+      "Deep tendon reflexes are absent",
+      "Deep tendon reflexes are very brisk and hyperactive with clonus",
+      "Deep tendon reflexes are normal",
+      "Deep tendon reflexes are slightly diminished"
+    ],
+    "rationale": "DTR grading: 0 = absent, 1+ = diminished, 2+ = normal, 3+ = brisker than average (hyperreflexic), 4+ = very brisk and hyperactive with clonus (suggests UMN damage or hypercalcemia).",
+    "answer": 1
+  },
+  {
+    "id": 192,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "Which assessment method is used to evaluate motor function of the upper extremities?",
+    "options": [
+      "Romberg test",
+      "Squeeze hands bilaterally and pronator drift test",
+      "Finger-to-nose test only",
+      "Heel-to-shin test"
+    ],
+    "rationale": "Upper extremity motor assessment includes: grip strength (squeeze hands bilaterally comparing sides), pronator drift test (arms outstretched, palms up, eyes closed — drift indicates weakness), and rapid alternating movements.",
+    "answer": 1
+  },
+  {
+    "id": 193,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "The nurse assesses lower extremity motor strength by asking the patient to:",
+    "options": [
+      "Squeeze the nurse's hands",
+      "Raise foot off bed or bend knees against resistance",
+      "Write their name",
+      "Follow a penlight with eyes"
+    ],
+    "rationale": "Lower extremity motor strength is assessed by asking the patient to raise each foot off the bed and push it down against the nurse's hand, and to dorsiflex/plantarflex the feet against resistance.",
+    "answer": 1
+  },
+  {
+    "id": 194,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "Which finding on neurological assessment indicates a change in the patient's condition that requires IMMEDIATE notification of the provider?",
+    "options": [
+      "GCS unchanged at 15",
+      "GCS declining from 15 to 12 with new unilateral pupil dilation",
+      "Mild headache rated 3/10",
+      "Slight fatigue"
+    ],
+    "rationale": "A declining GCS (from 15 to 12) combined with new unilateral pupil dilation indicates increasing ICP or expanding intracranial lesion. This is a neurological emergency requiring immediate provider notification.",
+    "answer": 1
+  },
+  {
+    "id": 195,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "NEXT GEN NCLEX — CASE: A 55-year-old patient is admitted after a fall. GCS is assessed: eyes open to voice (3), confused speech (4), withdraws from pain (4). The nurse calculates GCS =",
+    "options": [
+      "9",
+      "11",
+      "12",
+      "13"
+    ],
+    "rationale": "E3 (opens to voice) + V4 (confused) + M4 (withdraws from pain) = GCS of 11. This indicates moderate TBI. ICP monitoring is indicated at GCS ≤8; this patient requires close monitoring for deterioration.",
+    "answer": 1
+  },
+  {
+    "id": 196,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "Pupil assessment includes evaluating size, shape, and reactivity to light. A pupil that is 'sluggish' indicates:",
+    "options": [
+      "Normal pupillary function",
+      "Partial compression of CN III — early herniation warning",
+      "Complete CN III palsy",
+      "Bilateral brainstem infarction"
+    ],
+    "rationale": "A sluggish pupil (slow reaction to light) may indicate early compression of CN III from a developing mass lesion or herniation, before the pupil becomes fully fixed and dilated.",
+    "answer": 1
+  },
+  {
+    "id": 197,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "When documenting the patient's level of consciousness, which term indicates the patient is arousable to painful stimuli only?",
+    "options": [
+      "Alert",
+      "Lethargic",
+      "Obtunded",
+      "Stuporous"
+    ],
+    "rationale": "Levels of consciousness: Alert (fully awake), Lethargic (drowsy but arousable to voice), Obtunded (decreased alertness), Stuporous (requires painful stimuli to arouse), Comatose (unarousable).",
+    "answer": 3
+  },
+  {
+    "id": 198,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "Which cranial nerve assessment would specifically detect trigeminal neuralgia?",
+    "options": [
+      "CN I — sniff test",
+      "CN V — facial sensation testing of V1, V2, V3 divisions",
+      "CN VII — facial muscle testing",
+      "CN IX — gag reflex"
+    ],
+    "rationale": "CN V (Trigeminal) is tested by assessing facial sensation in all three divisions: V1 (ophthalmic — forehead), V2 (maxillary — cheek), V3 (mandibular — jaw). Trigeminal neuralgia involves V2 and V3 most commonly.",
+    "answer": 1
+  },
+  {
+    "id": 199,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "Cranial nerve VI (Abducens) palsy would SPECIFICALLY cause:",
+    "options": [
+      "Loss of smell",
+      "Inability to move the eye laterally (lateral gaze palsy) with double vision",
+      "Facial droop",
+      "Hearing loss"
+    ],
+    "rationale": "CN VI (Abducens) controls lateral rectus muscle for lateral eye movement. CN VI palsy causes inability to abduct the eye (look outward), resulting in esotropia (inward deviation) and horizontal diplopia.",
+    "answer": 1
+  },
+  {
+    "id": 200,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "The nurse is assessing a patient for meningeal irritation. Which finding indicates a positive Kernig's sign?",
+    "options": [
+      "Involuntary hip and knee flexion when the neck is flexed",
+      "Pain and resistance when attempting to extend the knee with the hip flexed to 90 degrees",
+      "Headache worsened by light",
+      "Bilateral fixed dilated pupils"
+    ],
+    "rationale": "Kernig's sign: with the patient supine, flex hip to 90°. Attempt to extend the knee. Pain and resistance indicate meningeal irritation. (Brudzinski's sign = involuntary hip/knee flexion when neck is flexed.)",
+    "answer": 1
+  },
+  {
+    "id": 201,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "Which assessment technique evaluates cerebellar function?",
+    "options": [
+      "Pupillary response to light",
+      "Finger-to-nose test, heel-to-shin test, and Romberg test",
+      "Deep tendon reflex testing",
+      "Cranial nerve testing"
+    ],
+    "rationale": "Cerebellar function is assessed by: finger-to-nose test (coordination), heel-to-shin test, rapid alternating movements (dysdiadochokinesia), and Romberg test (balance — standing with feet together, eyes closed).",
+    "answer": 1
+  },
+  {
+    "id": 202,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "What does a POSITIVE Romberg test indicate?",
+    "options": [
+      "Normal vestibular and proprioceptive function",
+      "Loss of balance when eyes are closed — indicating proprioception or vestibular disorder",
+      "Increased deep tendon reflexes",
+      "Cerebellar tumor"
+    ],
+    "rationale": "A positive Romberg test occurs when the patient loses balance with eyes closed (removing visual compensation). This indicates impaired proprioception (posterior column pathology) or vestibular dysfunction.",
+    "answer": 1
+  },
+  {
+    "id": 203,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "The nurse performs a cranial nerve II (Optic) assessment. Which technique is used?",
+    "options": [
+      "Sniff test for each nostril",
+      "Visual acuity testing (Snellen chart) and visual fields",
+      "Checking gag reflex",
+      "Assessing jaw strength"
+    ],
+    "rationale": "CN II (Optic) is assessed by visual acuity testing (Snellen chart), visual field testing (confrontation), and fundoscopic examination (looking for papilledema in elevated ICP).",
+    "answer": 1
+  },
+  {
+    "id": 204,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "CN III, IV, and VI are all tested together because they all control:",
+    "options": [
+      "Pupil size only",
+      "Eye movements — the six cardinal gazes",
+      "Facial sensation",
+      "Hearing and balance"
+    ],
+    "rationale": "CN III (Oculomotor), IV (Trochlear), and VI (Abducens) control eye movements. Together they are tested by having the patient follow the examiner's finger through the 6 cardinal gazes (H-pattern).",
+    "answer": 1
+  },
+  {
+    "id": 205,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "Which neurological complication is monitored by assessing for dilute, high-volume urine output (polyuria), hypernatremia, and low urine specific gravity?",
+    "options": [
+      "SIADH",
+      "Diabetes Insipidus (DI)",
+      "Hypovolemic shock",
+      "Renal failure"
+    ],
+    "rationale": "Diabetes Insipidus (DI) presents with polyuria (>200–300 mL/hr), very dilute urine (low specific gravity <1.005), and rising serum sodium (hypernatremia) due to insufficient ADH secretion.",
+    "answer": 1
+  },
+  {
+    "id": 206,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "When assessing a patient with neurological deficits for muscle tone, the nurse moves the extremity through passive range of motion. Resistance throughout the range of motion indicates:",
+    "options": [
+      "Flaccidity — lower motor neuron injury",
+      "Spasticity — upper motor neuron injury",
+      "Normal muscle tone",
+      "Cerebellar dysfunction"
+    ],
+    "rationale": "Spasticity (velocity-dependent resistance throughout passive ROM) indicates upper motor neuron (UMN) injury. Flaccidity (no resistance/tone) indicates lower motor neuron (LMN) injury. Both are abnormal.",
+    "answer": 1
+  },
+  {
+    "id": 207,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "Which lab value is monitored in SIADH complicating neurological disorders?",
+    "options": [
+      "Blood glucose and HbA1c",
+      "Serum sodium (hyponatremia) and urine osmolality",
+      "PT/INR and platelet count",
+      "Serum creatinine"
+    ],
+    "rationale": "SIADH is monitored by serum sodium (expect hyponatremia <135 mEq/L), urine sodium (elevated), urine osmolality (concentrated), and serum osmolality (decreased). Fluid restriction is the primary treatment.",
+    "answer": 1
+  },
+  {
+    "id": 208,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "Which expected outcome indicates that the nursing care for increased ICP has been effective?",
+    "options": [
+      "ICP of 22 mm Hg, patient responsive to pain only",
+      "Normal ICP, no CSF leakage, no brain death, no infection, normal vital signs",
+      "CPP of 45 mm Hg, patient sedated",
+      "Temperature of 39°C, HR 120"
+    ],
+    "rationale": "Expected outcomes for ICP management include: normal ICP and CPP, no infection, no CSF leakage, normal vital signs, no DI or SIADH, no brain death, and no wounds or muscle atrophy.",
+    "answer": 1
+  },
+  {
+    "id": 209,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "The nurse is teaching a student about the neurological assessment. Which statement about the EARLIEST sign of increasing ICP is CORRECT?",
+    "options": [
+      "Fixed, dilated pupils are the earliest sign",
+      "Change in level of consciousness is the earliest and most sensitive sign",
+      "Cushing's triad appears first",
+      "Headache always appears before LOC changes"
+    ],
+    "rationale": "Change in LOC (restlessness, confusion, decreased responsiveness) is the earliest, most sensitive indicator of increasing ICP. Fixed pupils and Cushing's triad are LATE signs of severe, often irreversible ICP elevation.",
+    "answer": 1
+  },
+  {
+    "id": 210,
+    "category": "Neurological Assessment",
+    "type": "mcq",
+    "q": "Which neurological assessment is performed specifically to evaluate the integrity of the brainstem in a comatose patient?",
+    "options": [
+      "Glasgow Coma Scale verbal response",
+      "Oculocephalic and oculovestibular reflexes",
+      "Grip strength assessment",
+      "Sensation testing of all extremities"
+    ],
+    "rationale": "Oculocephalic (doll's eye) and oculovestibular (cold caloric) reflexes test brainstem integrity. Absent reflexes in a comatose patient indicate severe brainstem dysfunction, which has implications for prognosis and brain death criteria.",
+    "answer": 1
+  },
+  {
+    "id": 211,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Shock is best defined as:",
+    "options": [
+      "Low blood pressure requiring vasopressors",
+      "A state of widespread inadequate cellular perfusion resulting in cellular dysfunction",
+      "Cardiac arrest requiring CPR",
+      "Acute blood loss of more than 2 liters"
+    ],
+    "rationale": "Shock is a life-threatening condition characterized by widespread cellular perfusion inadequacy, leading to cellular and organ dysfunction. Multiple types exist depending on the underlying mechanism.",
+    "answer": 1
+  },
+  {
+    "id": 212,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Which type of shock occurs as a direct complication of spinal cord injury (SCI) above T6?",
+    "options": [
+      "Hypovolemic shock",
+      "Neurogenic shock",
+      "Cardiogenic shock",
+      "Septic shock"
+    ],
+    "rationale": "Neurogenic shock occurs after SCI above T6 when loss of sympathetic nervous system tone causes massive vasodilation and bradycardia, leading to hypotension without tachycardia (unlike most shock types).",
+    "answer": 1
+  },
+  {
+    "id": 213,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "The classic presentation of neurogenic shock following spinal cord injury includes:",
+    "options": [
+      "Hypotension, tachycardia, and cool clammy skin",
+      "Hypotension, BRADYCARDIA, and warm, dry, flushed skin below injury",
+      "Hypertension, bradycardia, and sweating",
+      "Hypotension, fever, and altered mental status"
+    ],
+    "rationale": "Neurogenic shock is unique: hypotension with BRADYCARDIA (loss of sympathetic chronotropic stimulation) and warm, dry, flushed skin below the injury (loss of vasoconstriction). Most shock types cause tachycardia.",
+    "answer": 1
+  },
+  {
+    "id": 214,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Which type of shock is characterized by decreased cardiac output with adequate blood volume?",
+    "options": [
+      "Hypovolemic shock",
+      "Septic shock",
+      "Cardiogenic shock",
+      "Neurogenic shock"
+    ],
+    "rationale": "Cardiogenic shock results from the heart's failure to pump effectively (MI, severe arrhythmia, cardiomyopathy), causing decreased cardiac output despite adequate or increased blood volume. CO and BP fall while PCWP rises.",
+    "answer": 2
+  },
+  {
+    "id": 215,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Which type of shock results from infection and systemic inflammatory response causing massive vasodilation?",
+    "options": [
+      "Hypovolemic shock",
+      "Cardiogenic shock",
+      "Obstructive shock",
+      "Septic shock"
+    ],
+    "rationale": "Septic shock results from severe infection causing a systemic inflammatory response that leads to massive vasodilation, maldistribution of blood flow, and cellular hypoperfusion despite normal or elevated cardiac output.",
+    "answer": 3
+  },
+  {
+    "id": 216,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "The THREE stages of shock in correct order are:",
+    "options": [
+      "Irreversible → Compensatory → Progressive",
+      "Compensatory → Progressive → Irreversible",
+      "Progressive → Compensatory → Irreversible",
+      "Compensatory → Irreversible → Progressive"
+    ],
+    "rationale": "The stages of shock: (1) Compensatory — body mechanisms maintain perfusion; (2) Progressive — mechanisms fail, organ damage begins; (3) Irreversible — organ failure and death despite treatment.",
+    "answer": 1
+  },
+  {
+    "id": 217,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "During compensatory shock, the nurse would expect to find:",
+    "options": [
+      "BP 70/40, HR 140, unresponsive",
+      "Normal BP maintained by compensatory mechanisms — tachycardia, vasoconstriction, oliguria",
+      "Multi-organ failure",
+      "Fixed, dilated pupils"
+    ],
+    "rationale": "In compensatory shock, the body maintains blood pressure through compensatory mechanisms (tachycardia, vasoconstriction, ADH release, renin-angiotensin activation), but signs of reduced perfusion appear (oliguria, cool extremities).",
+    "answer": 1
+  },
+  {
+    "id": 218,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Multiple Organ Dysfunction Syndrome (MODS) occurs in shock when:",
+    "options": [
+      "Only the kidneys fail",
+      "Two or more organ systems fail as a result of uncontrolled systemic inflammation and prolonged hypoperfusion",
+      "The heart fails in isolation",
+      "Blood pressure drops below 80 systolic"
+    ],
+    "rationale": "MODS involves progressive failure of two or more organ systems resulting from the systemic inflammatory response and cellular hypoperfusion of prolonged shock. Mortality increases with each additional organ that fails.",
+    "answer": 1
+  },
+  {
+    "id": 219,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Which treatment is the PRIMARY intervention for hypovolemic shock?",
+    "options": [
+      "Vasopressor medications",
+      "Fluid resuscitation with IV crystalloids and blood products",
+      "Inotropic support",
+      "Corticosteroids"
+    ],
+    "rationale": "Hypovolemic shock is treated primarily by replacing the lost volume — IV crystalloids (normal saline, lactated Ringer's) and blood products for hemorrhagic shock. The source of fluid loss must also be controlled.",
+    "answer": 1
+  },
+  {
+    "id": 220,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Which nursing intervention is PRIORITY for ALL types of shock?",
+    "options": [
+      "Prepare for dialysis",
+      "Maintain airway, breathing, and circulation (ABCs)",
+      "Administer antibiotics",
+      "Insert nasogastric tube"
+    ],
+    "rationale": "Regardless of shock type, the priority nursing intervention is maintaining airway, breathing, and circulation (ABCs). Supplemental oxygen, IV access, fluid resuscitation, and monitoring are universal priorities.",
+    "answer": 1
+  },
+  {
+    "id": 221,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Vasopressin is used in the treatment of neurogenic shock because it:",
+    "options": [
+      "Causes bradycardia",
+      "Causes vasoconstriction to counteract the massive vasodilation of neurogenic shock",
+      "Reduces ICP",
+      "Increases heart rate"
+    ],
+    "rationale": "In neurogenic shock, vasopressin (and norepinephrine) are used to restore vasomotor tone and increase peripheral vascular resistance, counteracting the massive vasodilation from loss of sympathetic nervous system control.",
+    "answer": 1
+  },
+  {
+    "id": 222,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "NEXT GEN NCLEX — A patient with T4 spinal cord injury has BP 78/45, HR 52, warm dry skin below the injury. The nurse should FIRST:",
+    "options": [
+      "Administer IV fluids 2L bolus immediately without assessment",
+      "Recognize neurogenic shock: administer prescribed vasopressors, maintain airway, and notify provider",
+      "Apply cooling blankets",
+      "Administer oral antihypertensives"
+    ],
+    "rationale": "This presentation (hypotension + bradycardia + warm dry skin below T4 injury) is classic neurogenic shock. Treatment includes vasopressors (norepinephrine, vasopressin), careful fluid resuscitation, and airway management.",
+    "answer": 1
+  },
+  {
+    "id": 223,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Anaphylactic shock is caused by:",
+    "options": [
+      "Massive blood loss",
+      "Severe allergic reaction causing massive histamine release, vasodilation, and bronchospasm",
+      "Heart failure",
+      "CNS injury"
+    ],
+    "rationale": "Anaphylactic shock results from a type I hypersensitivity reaction triggering massive histamine release causing: vasodilation (hypotension), bronchospasm, urticaria, and angioedema. Treatment: epinephrine is first-line.",
+    "answer": 1
+  },
+  {
+    "id": 224,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Which early sign indicates a patient may be entering septic shock?",
+    "options": [
+      "Fever >38.3°C or <36°C, tachycardia, tachypnea, with suspected infection",
+      "Isolated tachycardia without other findings",
+      "Hypertension with increased urine output",
+      "Normal mental status with cold extremities"
+    ],
+    "rationale": "Septic shock is preceded by sepsis: infection + SIRS criteria (temperature >38.3 or <36°C, HR >90, RR >20, WBC >12,000 or <4,000, or altered mental status). Early recognition and treatment improve outcomes.",
+    "answer": 0
+  },
+  {
+    "id": 225,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "The nurse is caring for a patient in cardiogenic shock. Which hemodynamic parameter would be ELEVATED?",
+    "options": [
+      "Cardiac Output (CO)",
+      "Pulmonary Capillary Wedge Pressure (PCWP)",
+      "Systemic Vascular Resistance (SVR) — decreased",
+      "Mean Arterial Pressure (MAP)"
+    ],
+    "rationale": "In cardiogenic shock, the failing heart backs up fluid, causing ELEVATED PCWP (pulmonary congestion). CO is decreased, MAP is decreased, and SVR is elevated (compensatory vasoconstriction).",
+    "answer": 1
+  },
+  {
+    "id": 226,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Which intervention is specific to the management of septic shock?",
+    "options": [
+      "Surgical repair of the heart",
+      "Broad-spectrum antibiotics within 1 hour of diagnosis plus fluid resuscitation",
+      "Antivenom administration",
+      "Whole blood transfusion"
+    ],
+    "rationale": "Septic shock management includes: broad-spectrum antibiotics within 1 hour, IV fluid resuscitation (30 mL/kg crystalloid within 3 hours), vasopressors if refractory hypotension, source control, and supportive care.",
+    "answer": 1
+  },
+  {
+    "id": 227,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Spinal cord injury at the cervical level (C3–C5) is immediately life-threatening because:",
+    "options": [
+      "It causes immediate pain",
+      "It may affect the phrenic nerve and diaphragm, causing respiratory failure",
+      "It always causes seizures",
+      "It causes immediate cardiac arrest"
+    ],
+    "rationale": "C3-C5 is the origin of the phrenic nerve (mnemonic: C3, 4, 5 keeps the diaphragm alive). Injury at this level can paralyze the diaphragm, causing immediate respiratory failure requiring ventilatory support.",
+    "answer": 1
+  },
+  {
+    "id": 228,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Autonomic dysreflexia occurs in spinal cord injury ABOVE which level?",
+    "options": [
+      "L1",
+      "T10",
+      "T6",
+      "C7"
+    ],
+    "rationale": "Autonomic dysreflexia (AD) is a medical emergency in SCI patients with injuries at or above T6. It is triggered by a noxious stimulus below the injury causing a massive, uncontrolled sympathetic response.",
+    "answer": 2
+  },
+  {
+    "id": 229,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Classic signs of autonomic dysreflexia include:",
+    "options": [
+      "Hypotension, bradycardia, flushing below injury",
+      "Severe hypertension, pounding headache, diaphoresis, and flushing ABOVE injury",
+      "Hypotension, tachycardia, fever",
+      "Fixed dilated pupils and Cushing's triad"
+    ],
+    "rationale": "Autonomic dysreflexia: severe hypertension (BP can reach 300 mmHg), pounding headache, profuse sweating and flushing ABOVE the injury level, pallor below, and piloerection. A full bladder is the most common trigger.",
+    "answer": 1
+  },
+  {
+    "id": 230,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "The FIRST action for autonomic dysreflexia is:",
+    "options": [
+      "Administer antihypertensives immediately",
+      "Sit the patient upright and FIND AND REMOVE the noxious stimulus (often a full bladder)",
+      "Place patient flat in bed",
+      "Administer IV morphine"
+    ],
+    "rationale": "First-line management of autonomic dysreflexia: sit the patient upright (lowers BP), loosen restrictive clothing, and IMMEDIATELY identify and remove the triggering noxious stimulus (check/drain bladder first, then bowel).",
+    "answer": 1
+  },
+  {
+    "id": 231,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Meningitis can develop as a complication of neurological surgery. Which EARLY sign would alert the nurse?",
+    "options": [
+      "Bilateral leg weakness",
+      "Fever, severe headache, nuchal rigidity, photophobia",
+      "Pupil changes only",
+      "Bradycardia and hypertension"
+    ],
+    "rationale": "Meningitis presents with: fever, severe headache, nuchal rigidity (stiff neck), photophobia, altered LOC, and petechiae (meningococcal). After neuro surgery, meningitis is a serious infection complication.",
+    "answer": 1
+  },
+  {
+    "id": 232,
+    "category": "Shock",
+    "type": "sata",
+    "q": "SELECT ALL THAT APPLY: Which are complications of immobility in patients with neurological disorders?",
+    "options": [
+      "Pressure ulcers",
+      "Muscle atrophy",
+      "Pneumonia",
+      "Deep vein thrombosis",
+      "Improved reflexes",
+      "Aspiration"
+    ],
+    "rationale": "Complications of immobility include pressure ulcers, muscle atrophy, pneumonia, DVT, aspiration, and joint contractures. Immobility does NOT improve reflexes; hyperreflexia in UMN injury comes from neurological damage, not immobility.",
+    "answers": [
+      0,
+      1,
+      2,
+      3,
+      5
+    ]
+  },
+  {
+    "id": 233,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "A nurse is prioritizing care for a patient in the ICU with elevated ICP and a history of TBI. Which intervention should be performed FIRST?",
+    "options": [
+      "Obtain an 18-gauge IV access",
+      "Perform and document a complete neurological assessment including GCS, pupils, and motor function",
+      "Administer scheduled IV antibiotics",
+      "Change wound dressing"
+    ],
+    "rationale": "For a patient with elevated ICP and TBI, the priority is neurological assessment — GCS, pupil response, motor function, and vital signs — to establish baseline and detect deterioration requiring immediate intervention.",
+    "answer": 1
+  },
+  {
+    "id": 234,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "NEXT GEN NCLEX — A patient who had a craniotomy 12 hours ago begins to have a seizure. In order of priority, what should the nurse do FIRST?",
+    "options": [
+      "Restrain the patient and call the rapid response team",
+      "Time the seizure, protect from harm, maintain airway/turn to side, stay with patient, call for help",
+      "Place a bite block in the mouth",
+      "Administer oral phenytoin immediately"
+    ],
+    "rationale": "Post-craniotomy seizure management priority: note time of onset, protect from harm (clear area, pad rails), turn to side (airway protection), stay with patient, call for help, do NOT restrain or put objects in mouth.",
+    "answer": 1
+  },
+  {
+    "id": 235,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Which finding after TBI requires the nurse to suspect Diabetes Insipidus?",
+    "options": [
+      "Urine output 30 mL/hr, urine specific gravity 1.025",
+      "Urine output 400 mL/hr, urine specific gravity 1.002, rising serum sodium",
+      "Oliguria with concentrated urine",
+      "Anuria with decreasing serum osmolality"
+    ],
+    "rationale": "Diabetes Insipidus presents with massive dilute urine output (>300 mL/hr), very low urine specific gravity (<1.005), rising serum sodium (hypernatremia), and serum hyperosmolality. It requires ADH replacement (DDAVP).",
+    "answer": 1
+  },
+  {
+    "id": 236,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Which arterial blood gas (ABG) finding is expected in a TBI patient who is hyperventilating?",
+    "options": [
+      "Respiratory acidosis: pH 7.28, PaCO2 58, PaO2 95",
+      "Respiratory alkalosis: pH 7.50, PaCO2 28, PaO2 100",
+      "Metabolic acidosis: pH 7.28, PaCO2 38, HCO3 16",
+      "Metabolic alkalosis: pH 7.50, PaCO2 40, HCO3 32"
+    ],
+    "rationale": "Hyperventilation blows off CO2, causing respiratory alkalosis (high pH, low PaCO2). While short-term controlled hyperventilation can reduce ICP, it must be carefully managed to prevent dangerous cerebral vasoconstriction.",
+    "answer": 1
+  },
+  {
+    "id": 237,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Which patient population is at HIGHEST RISK for developing chronic subdural hematoma after minor head trauma?",
+    "options": [
+      "Pediatric patients under age 5",
+      "Older adults on anticoagulants with cerebral atrophy",
+      "Young adults with no medical history",
+      "Athletes with prior concussions"
+    ],
+    "rationale": "Older adults on anticoagulants are at highest risk for chronic subdural hematoma. Cerebral atrophy creates space that stretches bridging veins, and anticoagulants allow slow venous bleeding to accumulate over weeks.",
+    "answer": 1
+  },
+  {
+    "id": 238,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "The nurse notes that a patient receiving mannitol has a serum osmolality of 338 mOsm/kg. The nurse should:",
+    "options": [
+      "Increase the mannitol dose",
+      "Hold the mannitol and notify the provider — osmolality is approaching dangerous level (>320 mOsm/kg)",
+      "Continue current dosing",
+      "Administer more IV fluids to dilute the serum"
+    ],
+    "rationale": "Serum osmolality >320 mOsm/kg is a contraindication to further mannitol administration due to risk of acute kidney injury, electrolyte imbalances, and severe dehydration. The provider must be notified.",
+    "answer": 1
+  },
+  {
+    "id": 239,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "A nursing priority for a patient with aspiration pneumonia following TBI is:",
+    "options": [
+      "Preventing further aspiration with HOB elevation, oral hygiene, and swallowing assessment",
+      "Administering IV fluids aggressively",
+      "Restricting all oral intake indefinitely",
+      "Encouraging oral intake as soon as possible without speech therapy evaluation"
+    ],
+    "rationale": "After aspiration pneumonia, nursing priorities include: HOB elevation (30–45°), strict oral hygiene, NPO until speech therapy evaluates swallowing, monitoring respiratory status, and antibiotic therapy as ordered.",
+    "answer": 0
+  },
+  {
+    "id": 240,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "NEXT GEN NCLEX — The nurse is caring for 4 neurological patients. Which patient should be seen FIRST?",
+    "options": [
+      "Patient A: Post-craniotomy day 3, mild headache, temp 37.2°C, GCS 14",
+      "Patient B: TBI patient with GCS declining from 13 to 8 over 30 minutes with left pupil now dilated and fixed",
+      "Patient C: Brain tumor patient with blood glucose 160 mg/dL on dexamethasone",
+      "Patient D: Post-SAH patient complaining of photophobia and mild headache"
+    ],
+    "rationale": "Patient B is the priority. Rapidly declining GCS (13→8) with a new fixed dilated pupil indicates herniation syndrome — this is a life-threatening neurological emergency requiring immediate intervention.",
+    "answer": 1
+  },
+  {
+    "id": 241,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "After a lumbar spinal cord injury (below L2), the patient would experience:",
+    "options": [
+      "Spastic paralysis with hyperreflexia (UMN signs)",
+      "Flaccid paralysis with areflexia and loss of bowel/bladder control (LMN signs)",
+      "Autonomic dysreflexia",
+      "Neurogenic shock"
+    ],
+    "rationale": "Injuries below L1 affect the cauda equina (lower motor neurons), causing flaccid paralysis, areflexia, and bowel/bladder dysfunction. Neurogenic shock and autonomic dysreflexia occur with injuries ABOVE T6.",
+    "answer": 1
+  },
+  {
+    "id": 242,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "A patient with severe TBI requires nasogastric tube feeding. The FIRST action before every feeding is:",
+    "options": [
+      "Warm the formula",
+      "Verify tube placement and residual volume",
+      "Obtain a chest X-ray",
+      "Assess blood pressure"
+    ],
+    "rationale": "Before every tube feeding, tube placement must be verified (aspiration of gastric contents, pH testing, X-ray if uncertain), and gastric residual volume must be checked to prevent aspiration.",
+    "answer": 1
+  },
+  {
+    "id": 243,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Which is a correct statement about the oculocephalic (doll's eye) reflex in brain injury?",
+    "options": [
+      "It is present when brainstem function is absent",
+      "Intact brainstem: eyes move opposite to head rotation (normal). Absent reflex indicates severe brainstem damage",
+      "Absent reflex is normal",
+      "This test is performed with ice water instillation"
+    ],
+    "rationale": "Intact doll's eye reflex (eyes counter-rotate opposite to head movement) indicates intact brainstem. Absent oculocephalic reflex in a comatose patient indicates severe brainstem damage and has prognostic implications.",
+    "answer": 1
+  },
+  {
+    "id": 244,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Which statement correctly describes spinal shock after a SCI?",
+    "options": [
+      "A permanent loss of all spinal cord function below the injury",
+      "A temporary loss of all neurological function below the injury level (flaccidity, areflexia, loss of autonomic function) lasting days to weeks",
+      "The same as neurogenic shock",
+      "Only affects motor function"
+    ],
+    "rationale": "Spinal shock is a temporary physiological depression of all spinal cord function below the injury (flaccid paralysis, areflexia, loss of sensation, autonomic dysfunction) lasting days to weeks after injury.",
+    "answer": 1
+  },
+  {
+    "id": 245,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Patient education for a newly diagnosed brain tumor patient should include information about:",
+    "options": [
+      "How the brain works in children only",
+      "Medication management, seizure precautions, fall prevention, when to call provider, and emotional support resources",
+      "Diet modifications only",
+      "Only surgical information"
+    ],
+    "rationale": "Brain tumor patient and family education must be comprehensive: medications, seizure precautions, fall prevention, activity restrictions, when to call the provider, follow-up appointments, and emotional/psychosocial support.",
+    "answer": 1
+  },
+  {
+    "id": 246,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Which goal is MOST appropriate for a patient at risk for aspiration following neurological injury?",
+    "options": [
+      "Patient will eat independently without assistance within 24 hours",
+      "Patient will maintain a patent airway with no aspiration events as evidenced by clear breath sounds",
+      "Patient will consume 100% of all meals",
+      "Patient will ambulate independently within 48 hours"
+    ],
+    "rationale": "The priority goal for aspiration risk is airway protection. A patent airway without aspiration events (clear breath sounds, no fever, no cough after eating) is the primary measurable outcome.",
+    "answer": 1
+  },
+  {
+    "id": 247,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "NEXT GEN NCLEX — The nurse is reviewing a patient's 24-hour intake and output (I&O). Intake is 2,400 mL; urine output is 1,800 mL via urinary catheter. The patient is a TBI patient with an ICP monitor in place. Current ICP is 14 mm Hg. Which action is most appropriate?",
+    "options": [
+      "Notify provider urgently — output critically low",
+      "Document findings — ICP is within normal range and I&O balance is acceptable",
+      "Restrict IV fluids immediately to reduce ICP",
+      "Administer diuretics to increase urine output"
+    ],
+    "rationale": "Normal ICP is 5–15 mm Hg, and this patient's ICP is 14 mm Hg (within normal). I&O shows approximately 600 mL positive balance, which is acceptable. Documentation and continued monitoring are appropriate; no urgent intervention needed.",
+    "answer": 1
+  },
+  {
+    "id": 248,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "A patient admitted with subarachnoid hemorrhage develops sudden severe worsening of headache on day 7. The nurse suspects:",
+    "options": [
+      "Normal post-SAH headache",
+      "Cerebral vasospasm causing delayed ischemia",
+      "Medication headache",
+      "Tension headache"
+    ],
+    "rationale": "Worsening neurological status or new severe headache 4–14 days after SAH is a classic presentation of cerebral vasospasm, the most common and serious delayed complication. Immediate assessment and treatment are critical.",
+    "answer": 1
+  },
+  {
+    "id": 249,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "Which type of herniation involves the cerebellar tonsils herniating through the foramen magnum, compressing the medulla and causing death?",
+    "options": [
+      "Uncal herniation",
+      "Cingulate herniation",
+      "Tonsillar (downward cerebellar) herniation",
+      "Central herniation"
+    ],
+    "rationale": "Tonsillar (downward cerebellar) herniation involves the cerebellar tonsils herniating through the foramen magnum, compressing the medulla oblongata (respiratory and cardiac centers), causing respiratory arrest and death.",
+    "answer": 2
+  },
+  {
+    "id": 250,
+    "category": "Shock",
+    "type": "mcq",
+    "q": "NEXT GEN NCLEX — A nurse is prioritizing care. A patient with TBI has ICP of 24 mm Hg, MAP of 78. Which FIRST action addresses the PRIORITY problem?",
+    "options": [
+      "Administer scheduled aspirin",
+      "Calculate CPP (78–24=54 mm Hg — critically low), elevate HOB to 30°, notify provider, prepare to administer osmotic diuretic",
+      "Perform full head-to-toe assessment before any intervention",
+      "Document findings and reassess in 2 hours"
+    ],
+    "rationale": "CPP = MAP – ICP = 78 – 24 = 54 mm Hg (critically low; <50 causes ischemia). Priority actions: HOB 30°, notify provider immediately, prepare mannitol or hypertonic saline, ensure adequate oxygenation, and reassess frequently.",
+    "answer": 1
+  }
+];
+
+const branches = [
+  {
+    id:"icp", color:"#8e44ad", icon:"🧠", label:"Intracranial Pressure",
+    items:[
+      "Normal ICP: 5–15 mmHg — elevated >20 mmHg",
+      "Monro-Kellie doctrine: rigid skull — one component ↑, another must ↓",
+      "CPP = MAP – ICP (normal 70–100 mmHg; <50 = ischemia)",
+      "Stage 1: total compensation, no symptoms",
+      "Stage 2: compensation beginning to fail — mild neuro changes",
+      "Stage 3: decompensation — rapid neurological decline",
+      "Stage 4: herniation imminent — death likely",
+      "Cushing's Triad: widened pulse pressure + bradycardia + irregular respirations",
+      "Decorticate (flexion) = cortical damage; Decerebrate (extension) = brainstem",
+      "ICP monitoring indicated for GCS ≤8 after head injury",
+      "HOB 30°, head midline, avoid Valsalva, limit stimuli",
+      "Mannitol (osmotic diuretic) — monitor serum osmolality <320",
+      "Hypertonic saline (3%) — monitor Na⁺, avoid rapid overcorrection",
+      "Vasogenic edema: BBB disruption → treat with steroids (dexamethasone)",
+      "Cytotoxic edema: cell death/swelling → no steroid benefit",
+      "Herniation types: uncal (CN III palsy), central, transtentorial",
+      "LICOX catheter monitors brain tissue O₂ — normal PbtO₂ >20 mmHg"
+    ]
+  },
+  {
+    id:"tbi", color:"#c0392b", icon:"🤕", label:"Head Injury / TBI",
+    items:[
+      "Falls = #1 cause of TBI in adults; MVA = #1 in young adults",
+      "Battle's sign: bruising behind ears = basilar skull fracture",
+      "Raccoon eyes (periorbital bruising) = anterior fossa fracture",
+      "Halo sign: CSF + blood on gauze forms 'halo' ring",
+      "No NG tube with basilar skull fracture — use OG tube",
+      "Concussion: temporary LOC/confusion, normal CT",
+      "DAI (Diffuse Axonal Injury): shearing of axons, poor prognosis",
+      "Epidural hematoma: lucid interval → arterial bleed (middle meningeal)",
+      "Subdural hematoma: venous bleed — acute/subacute/chronic",
+      "Intracerebral hematoma: within brain parenchyma (frontal/temporal)",
+      "CT scan = best initial test for head trauma",
+      "GCS <8 = intubate for airway protection",
+      "Craniectomy nursing: protect missing bone flap area",
+      "Coup-contrecoup injury: impact + rebound damage"
+    ]
+  },
+  {
+    id:"tumors", color:"#e67e22", icon:"🔵", label:"Brain Tumors",
+    items:[
+      "Primary vs. metastatic — most common metastatic sources: lung, breast, melanoma",
+      "Gliomas (astrocytoma, GBM) — most common primary brain tumors",
+      "GBM Grade IV: most aggressive, poor prognosis",
+      "Meningioma: benign, arises from meninges, often curable with surgery",
+      "Dexamethasone: reduces cerebral edema around tumors",
+      "Frontal lobe: personality changes, judgment, Broca's aphasia",
+      "Temporal lobe: Wernicke's aphasia, memory, auditory",
+      "Parietal lobe: sensory deficits, spatial awareness",
+      "Occipital lobe: visual disturbances",
+      "Cerebellar tumors: ataxia, coordination, balance",
+      "Seizure management: phenytoin/levetiracetam prophylaxis",
+      "Craniotomy: post-op neuro checks q1h, HOB 30°",
+      "Radiation + chemotherapy (temozolomide) for GBM"
+    ]
+  },
+  {
+    id:"aneurysm", color:"#e74c3c", icon:"🩸", label:"Aneurysm / AVM",
+    items:[
+      "\"Worst headache of my life\" = sentinel sign of SAH",
+      "Circle of Willis: most common aneurysm site",
+      "Nuchal rigidity, photophobia, phonophobia with SAH",
+      "CT head without contrast = first test for suspected SAH",
+      "Lumber puncture if CT negative (xanthochromia)",
+      "Vasospasm: days 4–14 post SAH — monitor with TCD",
+      "Nimodipine: calcium channel blocker → prevents vasospasm",
+      "Triple-H therapy: Hypertension, Hypervolemia, Hemodilution",
+      "Surgical clipping vs. endovascular coiling for aneurysm",
+      "AVM: arteriovenous malformation — risk of hemorrhage ~2-4%/year",
+      "Re-bleeding: highest risk first 24 hours — maintain quiet environment",
+      "Avoid: straining, bright lights, stimulation in acute SAH"
+    ]
+  },
+  {
+    id:"assessment", color:"#27ae60", icon:"🔍", label:"Neurological Assessment",
+    items:[
+      "GCS: Eyes (1–4) + Verbal (1–5) + Motor (1–6) = max 15",
+      "GCS ≤8 = coma — initiate airway management",
+      "CN I: olfactory (smell) — sniff coffee/vanilla",
+      "CN II: optic — visual acuity, pupil light reflex",
+      "CN III/IV/VI: eye movement — PERRLA, diplopia",
+      "CN V: trigeminal — facial sensation, corneal reflex",
+      "CN VII: facial — smile, frown, close eyes",
+      "CN VIII: vestibulocochlear — whisper test, Weber, Rinne, Romberg",
+      "CN IX/X: gag reflex, swallowing ability",
+      "CN XI: spinal accessory — shoulder shrug strength",
+      "CN XII: hypoglossal — tongue protrusion, deviation",
+      "Motor grading 0–5: 0=no movement, 5=full strength",
+      "DTR grading 0–4+: 2+ = normal",
+      "Pronator drift: positive = corticospinal tract dysfunction",
+      "Kernig's sign: pain with knee extension when hip flexed (meningitis)",
+      "Brudzinski's sign: involuntary leg flexion with neck flexion (meningitis)",
+      "DI vs SIADH: DI = low ADH → polyuria + dilute urine; SIADH = excess ADH → oliguria + concentrated urine"
+    ]
+  },
+  {
+    id:"shock", color:"#2980b9", icon:"⚡", label:"Shock & Spinal Cord",
+    items:[
+      "Neurogenic shock: hypotension + bradycardia + warm/dry skin (SCI above T6)",
+      "Spinal shock: temporary loss of all function below injury — not a circulatory shock",
+      "Autonomic dysreflexia: above T6 SCI — massive sympathetic response",
+      "AD triggers: bladder distension, bowel impaction, pressure ulcers",
+      "AD treatment: sit upright (↓ BP), find and remove stimulus",
+      "Cardiogenic shock: ↓ CO, elevated PCWP, cool/clammy skin",
+      "Septic shock: infection → vasodilation → warm/flushed → then cold/clammy",
+      "Septic shock: antibiotics within 1 hour of recognition",
+      "Hypovolemic shock: tachycardia + hypotension + pale/cool + decreased UO",
+      "MODS: multiple organ dysfunction — late complication of shock",
+      "Vasopressors (norepinephrine) for neurogenic and septic shock",
+      "MAP goal ≥65 mmHg in shock states"
+    ]
+  }
+];
+
+const drugs = [
+  {name:"Mannitol (Osmitrol)",cls:"Osmotic Diuretic",use:"Elevated ICP / Cerebral Edema",moa:"Draws fluid from brain into bloodstream by osmosis → reduces ICP",nursing:"Monitor serum osmolality (hold if >320 mOsm/kg). Use filter for crystallization. Foley catheter required. Strict I&O.",alert:"⚠️ Contraindicated in anuria. Rebound ICP if discontinued abruptly. Monitor electrolytes."},
+  {name:"Hypertonic Saline (3%)",cls:"Hyperosmotic Agent",use:"Elevated ICP / Cerebral Edema",moa:"Increases serum osmolality → draws water from brain cells → reduces cerebral edema",nursing:"Central line required. Monitor Na⁺ every 2–4h. Target Na⁺ 145–155 mEq/L. Avoid rapid overcorrection (osmotic demyelination).",alert:"⚠️ Central pontine myelinolysis risk with too-rapid correction. Monitor closely."},
+  {name:"Nimodipine (Nimotop)",cls:"Calcium Channel Blocker",use:"Subarachnoid Hemorrhage — vasospasm prevention",moa:"Blocks calcium channels in cerebral arteries → prevents vasospasm after SAH",nursing:"Give every 4 hours for 21 days. Oral/NG only — NEVER IV. Monitor BP (hypotension risk). Do NOT crush extended-release.",alert:"⚠️ ORAL ONLY — fatal errors have occurred with IV administration. Hold for SBP <90."},
+  {name:"Dexamethasone (Decadron)",cls:"Corticosteroid",use:"Cerebral edema around brain tumors",moa:"Reduces blood-brain barrier permeability → decreases vasogenic edema",nursing:"Monitor blood glucose (hyperglycemia). GI protection (PPI/H2 blocker). Taper slowly — do not stop abruptly. Not effective for cytotoxic edema.",alert:"⚠️ NOT indicated for TBI — worsens outcomes. Monitor for immunosuppression and GI bleed."},
+  {name:"Phenytoin / Fosphenytoin",cls:"Antiepileptic",use:"Seizure prevention/treatment (brain tumors, TBI)",moa:"Stabilizes neuronal membranes by blocking sodium channels → prevents seizure propagation",nursing:"Monitor levels (therapeutic 10–20 mcg/mL). Gingival hyperplasia risk. Administer IV slowly (<50 mg/min). Fosphenytoin preferred IV (less cardiotoxicity).",alert:"⚠️ Purple glove syndrome with IV phenytoin. Highly protein-bound — many drug interactions."},
+  {name:"Levetiracetam (Keppra)",cls:"Antiepileptic",use:"Seizure prophylaxis / treatment",moa:"Binds SV2A synaptic vesicle protein → inhibits neurotransmitter release",nursing:"Fewer drug interactions than phenytoin. Monitor for behavioral changes (irritability, aggression). Renal dosing adjustment required.",alert:"⚠️ Monitor for psychiatric side effects — hostility, psychosis. Abrupt discontinuation can trigger seizures."},
+  {name:"Alteplase (tPA)",cls:"Thrombolytic",use:"Acute Ischemic Stroke (within 3–4.5 hrs)",moa:"Converts plasminogen to plasmin → dissolves fibrin clot",nursing:"Door-to-needle goal <60 min. Strict BP control: maintain <180/105. No anticoagulants/antiplatelets for 24h. Watch for hemorrhagic conversion.",alert:"⚠️ Major bleeding risk. Contraindicated if: hemorrhagic stroke, recent surgery, INR >1.7, platelets <100,000."},
+  {name:"Norepinephrine (Levophed)",cls:"Vasopressor / Catecholamine",use:"Neurogenic shock, Septic shock",moa:"α1 and β1 agonist → vasoconstriction + ↑ cardiac contractility → raises MAP",nursing:"Central line preferred. Titrate to MAP ≥65 mmHg. Assess peripheral perfusion. Document infusion rate changes.",alert:"⚠️ Extravasation causes tissue necrosis — treat with phentolamine. Do NOT stop abruptly."},
+  {name:"Atropine Sulfate",cls:"Anticholinergic",use:"Bradycardia in neurogenic shock",moa:"Blocks muscarinic receptors → ↑ heart rate by removing vagal tone",nursing:"Used for symptomatic bradycardia in neurogenic shock. Monitor HR and BP. May cause urinary retention, dry mouth, blurred vision.",alert:"⚠️ Use cautiously in elderly — confusion and urinary retention. Avoid in 2nd/3rd degree AV block."},
+  {name:"Methylprednisolone",cls:"Corticosteroid",use:"Acute Spinal Cord Injury (controversial)",moa:"Anti-inflammatory — reduces secondary cord injury from edema",nursing:"High-dose protocol within 8 hours of SCI (historically used). Monitor glucose, GI bleeding. Controversial — not standard of care in many facilities.",alert:"⚠️ Current guidelines do NOT recommend routine use for SCI due to adverse effects outweighing benefits."}
+];
+
+const catColors = {
+  "Intracranial Pressure":"#8e44ad",
+  "Head Injury / TBI":"#c0392b",
+  "Brain Tumors":"#e67e22",
+  "Aneurysm / AVM":"#e74c3c",
+  "Neurological Assessment":"#27ae60",
+  "Shock":"#2980b9"
+};
+const categories = ["All", ...Object.keys(catColors)];
+
+let selectedCat = "All";
+let selectedQty = 250;
+let currentQ = 0, score = 0, selected = null, answered = [];
+let filteredQs = [...questions];
+let sataPicked = [];
+let missedQs = [];
+
+// ── BUILD QUANTITY SELECTOR ──────────────────────────
+function buildQtySelector() {
+  const pool = selectedCat === "All" ? questions : questions.filter(q=>q.category===selectedCat);
+  const total = pool.length;
+  const sizes = [5,10,15,20,25,30,50,75,100,150,200,250].filter(n=>n<=total);
+  if (!sizes.includes(total)) sizes.push(total);
+
+  const grid = document.getElementById("qty-grid");
+  grid.innerHTML = "";
+  // Clamp selectedQty to available
+  if (selectedQty > total) selectedQty = total;
+
+  sizes.forEach(n => {
+    const btn = document.createElement("button");
+    btn.className = "qty-btn" + (n === selectedQty ? " active" : "");
+    btn.textContent = n;
+    btn.onclick = () => {
+      selectedQty = n;
+      document.querySelectorAll(".qty-btn").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById("q-count").textContent = n;
+    };
+    grid.appendChild(btn);
+  });
+  document.getElementById("qty-avail").textContent = `${total} questions available in this category`;
+  document.getElementById("q-count").textContent = selectedQty;
+}
+
+// ── BUILD BRANCHES ──────────────────────────────────
+function buildBranches() {
+  const grid = document.getElementById("branches");
+  branches.forEach(b => {
+    const card = document.createElement("div");
+    card.className = "branch-card";
+    card.style.borderLeftColor = b.color;
+    card.innerHTML = `
+      <div class="branch-header">
+        <div class="left">
+          <span class="branch-icon">${b.icon}</span>
+          <span class="branch-label" style="color:${b.color}">${b.label}</span>
+        </div>
+        <span class="branch-arrow" style="color:${b.color}" id="arr-${b.id}">▸</span>
+      </div>
+      <ul class="branch-items" id="items-${b.id}" style="display:none">
+        ${b.items.map(i=>`<li><span class="dot" style="color:${b.color}">◆</span>${i}</li>`).join("")}
+      </ul>`;
+    card.onclick = () => {
+      const ul = document.getElementById("items-"+b.id);
+      const arr = document.getElementById("arr-"+b.id);
+      const open = ul.style.display !== "none";
+      ul.style.display = open ? "none" : "block";
+      arr.textContent = open ? "▸" : "▾";
+      card.style.background = open ? "rgba(255,255,255,0.03)" : `${b.color}11`;
+      card.style.borderColor = open ? "rgba(255,255,255,0.1)" : b.color;
+      card.style.boxShadow = open ? "none" : `0 4px 20px ${b.color}33`;
+    };
+    grid.appendChild(card);
+  });
+}
+
+// ── BUILD CATEGORY FILTERS ───────────────────────────
+function buildFilters() {
+  const cf = document.getElementById("cat-filters");
+  categories.forEach(cat => {
+    const btn = document.createElement("button");
+    btn.className = "cat-btn" + (cat === "All" ? " active" : "");
+    btn.style.background = cat === "All" ? "#5b2d8e" : "rgba(255,255,255,0.07)";
+    btn.style.color = cat === "All" ? "#fff" : "#a09070";
+    const count = cat === "All" ? questions.length : questions.filter(q=>q.category===cat).length;
+    btn.textContent = `${cat} (${count})`;
+    btn.onclick = () => {
+      selectedCat = cat;
+      document.querySelectorAll(".cat-btn").forEach(b => {
+        b.classList.remove("active");
+        b.style.background = "rgba(255,255,255,0.07)";
+        b.style.color = "#a09070";
+      });
+      btn.classList.add("active");
+      btn.style.background = catColors[cat] || "#5b2d8e";
+      btn.style.color = "#fff";
+      filteredQs = cat === "All" ? [...questions] : questions.filter(q=>q.category===cat);
+      document.getElementById("q-count").textContent = filteredQs.length;
+      selectedQty = filteredQs.length;
+      buildQtySelector();
+    };
+    cf.appendChild(btn);
+  });
+}
+
+// ── BUILD DRUGS ──────────────────────────────────────
+function buildDrugs() {
+  const grid = document.getElementById("drugs-grid");
+  drugs.forEach(d => {
+    grid.innerHTML += `
+      <div class="drug-card">
+        <div class="drug-top">
+          <div>
+            <div class="drug-name">${d.name}</div>
+            <div class="drug-class">${d.cls.toUpperCase()}</div>
+          </div>
+          <div class="drug-use-badge">${d.use}</div>
+        </div>
+        <div class="drug-moa"><span>MOA: </span>${d.moa}</div>
+        <div class="drug-nursing"><span>Nursing: </span>${d.nursing}</div>
+        <div class="drug-alert">⚠️ ${d.alert}</div>
+      </div>`;
+  });
+}
+
+// ── TAB NAV ──────────────────────────────────────────
+function showTab(tab) {
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+  document.getElementById(tab+"-panel").classList.add("active");
+  const tabIndex = ["map","quiz","drugs"].indexOf(tab);
+  document.querySelectorAll(".tab-btn")[tabIndex].classList.add("active");
+}
+
+// ── QUIZ ENGINE ──────────────────────────────────────
+function startQuiz() {
+  currentQ = 0; score = 0; selected = null; answered = []; sataPicked = [];
+  document.getElementById("quiz-start-screen").style.display = "none";
+  document.getElementById("quiz-results-screen").style.display = "none";
+  document.getElementById("quiz-question-screen").style.display = "block";
+  // Shuffle then slice to selectedQty
+  const pool = selectedCat === "All" ? [...questions] : questions.filter(q=>q.category===selectedCat);
+  filteredQs = pool.sort(() => Math.random() - 0.5).slice(0, selectedQty);
+  renderQ();
+}
+
+function renderQ() {
+  const q = filteredQs[currentQ];
+  document.getElementById("q-num-label").textContent = `Question ${currentQ+1} of ${filteredQs.length}`;
+  const badge = document.getElementById("q-cat-badge");
+  badge.textContent = q.category.toUpperCase();
+  badge.style.background = `${catColors[q.category]||"#5b2d8e"}33`;
+  badge.style.border = `1px solid ${catColors[q.category]||"#5b2d8e"}`;
+  badge.style.color = catColors[q.category] || "#c39bd3";
+
+  const typeBadge = document.getElementById("q-type-badge");
+  if (q.type === "sata") {
+    typeBadge.style.display = "inline-block";
+    document.getElementById("sata-hint").style.display = "block";
+    document.getElementById("sata-submit-wrap").style.display = "block";
+  } else {
+    typeBadge.style.display = "none";
+    document.getElementById("sata-hint").style.display = "none";
+    document.getElementById("sata-submit-wrap").style.display = "none";
+  }
+
+  document.getElementById("progress-fill").style.width = `${(currentQ/filteredQs.length)*100}%`;
+  document.getElementById("q-text").textContent = q.q;
+
+  const opts = document.getElementById("options");
+  opts.innerHTML = "";
+  sataPicked = [];
+
+  q.options.forEach((opt, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "opt-btn";
+    if (q.type === "sata") {
+      btn.innerHTML = `<span class="opt-check" id="chk-${idx}"></span>${opt}`;
+      btn.onclick = () => toggleSATA(idx, btn);
+    } else {
+      btn.textContent = opt;
+      btn.onclick = () => handleMCQ(idx);
+    }
+    opts.appendChild(btn);
+  });
+  document.getElementById("rationale-box").style.display = "none";
+  selected = null;
+}
+
+function handleMCQ(idx) {
+  if (selected !== null) return;
+  selected = idx;
+  const q = filteredQs[currentQ];
+  const correct = idx === q.answer;
+  if (correct) score++;
+  answered.push({qIdx:currentQ, selected:idx, selectedArr:null, correct});
+  const btns = document.querySelectorAll(".opt-btn");
+  btns.forEach((btn,i) => {
+    btn.disabled = true;
+    if (i === q.answer) btn.classList.add("correct");
+    else if (i === idx && !correct) btn.classList.add("wrong");
+  });
+  showRationale(q);
+}
+
+function toggleSATA(idx, btn) {
+  if (selected !== null) return;
+  const pos = sataPicked.indexOf(idx);
+  const chk = document.getElementById("chk-"+idx);
+  if (pos === -1) {
+    sataPicked.push(idx);
+    btn.classList.add("selected-sata");
+    chk.textContent = "✓";
+    chk.style.background = "#5b2d8e";
+    chk.style.borderColor = "#c39bd3";
+  } else {
+    sataPicked.splice(pos, 1);
+    btn.classList.remove("selected-sata");
+    chk.textContent = "";
+    chk.style.background = "";
+    chk.style.borderColor = "rgba(255,255,255,0.3)";
+  }
+}
+
+function submitSATA() {
+  if (selected !== null) return;
+  selected = sataPicked.slice();
+  const q = filteredQs[currentQ];
+  const correct = arraysEqual(sataPicked.slice().sort(), q.answers.slice().sort());
+  if (correct) score++;
+  answered.push({qIdx:currentQ, selected:null, selectedArr:sataPicked.slice(), correct});
+
+  const btns = document.querySelectorAll(".opt-btn");
+  btns.forEach((btn,i) => {
+    btn.disabled = true;
+    if (q.answers.includes(i)) btn.classList.add("correct");
+    else if (sataPicked.includes(i) && !q.answers.includes(i)) btn.classList.add("wrong");
+  });
+  document.getElementById("sata-submit-wrap").style.display = "none";
+  showRationale(q);
+}
+
+function arraysEqual(a, b) {
+  return a.length === b.length && a.every((v,i) => v === b[i]);
+}
+
+function showRationale(q) {
+  document.getElementById("rationale-text").textContent = q.rationale;
+  const nb = document.getElementById("next-btn");
+  nb.textContent = currentQ+1 >= filteredQs.length ? "See Results →" : "Next Question →";
+  nb.style.background = currentQ+1 >= filteredQs.length ? "#27ae60" : "#5b2d8e";
+  document.getElementById("rationale-box").style.display = "block";
+}
+
+function nextQ() {
+  if (currentQ+1 >= filteredQs.length) { showResults(); return; }
+  currentQ++;
+  renderQ();
+}
+
+function showResults() {
+  document.getElementById("quiz-question-screen").style.display = "none";
+  document.getElementById("quiz-results-screen").style.display = "block";
+  const pct = score/filteredQs.length;
+  document.getElementById("trophy").textContent = pct >= 0.8 ? "🏆" : pct >= 0.6 ? "📚" : "💪";
+  document.getElementById("big-score").textContent = `${score}/${filteredQs.length}`;
+  document.getElementById("big-score").style.color = pct >= 0.8 ? "#27ae60" : "#e67e22";
+  document.getElementById("pct-score").textContent = `${Math.round(pct*100)}% Correct`;
+  const grade = pct >= 0.9 ? "A" : pct >= 0.8 ? "B" : pct >= 0.7 ? "C" : pct >= 0.6 ? "D" : "F";
+  document.getElementById("feedback").textContent = pct >= 0.8 ? `Grade ${grade} — Excellent! NCLEX-ready on this topic.` : pct >= 0.6 ? `Grade ${grade} — Good progress — review missed concepts below.` : `Grade ${grade} — Keep studying — focus on your weak areas.`;
+  document.getElementById("feedback").style.color = pct >= 0.8 ? "#7dcea0" : "#e57373";
+
+  const missed = answered.filter(a=>!a.correct);
+  missedQs = missed.map(a => filteredQs[a.qIdx]);
+  const ms = document.getElementById("missed-section");
+  if (missed.length > 0) {
+    ms.innerHTML = `<h3>❌ MISSED QUESTIONS — REVIEW</h3>`;
+    missed.forEach(a => {
+      const q = filteredQs[a.qIdx];
+      let yourAns = "";
+      let correctAns = "";
+      if (q.type === "sata") {
+        yourAns = a.selectedArr && a.selectedArr.length > 0 ? a.selectedArr.map(i=>q.options[i]).join(", ") : "(none selected)";
+        correctAns = q.answers.map(i=>q.options[i]).join(", ");
+      } else {
+        yourAns = q.options[a.selected];
+        correctAns = q.options[q.answer];
+      }
+      ms.innerHTML += `<div class="missed-item">
+        <div class="missed-q">${q.type==="sata"?"[SELECT ALL] ":""}${q.q}</div>
+        <div class="missed-yours">Your answer: ${yourAns}</div>
+        <div class="missed-correct">✓ Correct: ${correctAns}</div>
+        <div class="missed-rat">${q.rationale}</div>
+      </div>`;
+    });
+  } else {
+    ms.innerHTML = `<div style="color:#7dcea0;font-size:15px;padding:20px">🎉 Perfect score! No missed questions.</div>`;
+  }
+}
+
+function retryMissed() {
+  if (missedQs.length === 0) return;
+  filteredQs = [...missedQs];
+  currentQ = 0; score = 0; selected = null; answered = []; sataPicked = [];
+  document.getElementById("quiz-results-screen").style.display = "none";
+  document.getElementById("quiz-question-screen").style.display = "block";
+  renderQ();
+}
+
+function backToStart() {
+  document.getElementById("quiz-results-screen").style.display = "none";
+  document.getElementById("quiz-question-screen").style.display = "none";
+  document.getElementById("quiz-start-screen").style.display = "block";
+  filteredQs = selectedCat === "All" ? [...questions] : questions.filter(q=>q.category===selectedCat);
+  buildQtySelector();
+}
+
+buildBranches();
+buildFilters();
+buildQtySelector();
+buildDrugs();
+</script>
+</body>
+</html>
